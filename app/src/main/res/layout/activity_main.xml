@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!--<RelativeLayout-->
+    <!--android:layout_width="120dip"-->
+    <!--android:layout_height="150dip"-->
+    <!--android:background="#888888"-->
+    <!--android:layout_centerInParent="true"-->
+    <!--&gt;-->
+    <!--<com.bitmap.readrgb.RecordingView-->
+    <!--android:id="@+id/uvMeter"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--/>-->
+    <!--</RelativeLayout>-->
+
+    <RelativeLayout
+        android:id="@+id/RL"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/img"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_margin="5dp"
+            android:src="@mipmap/lenna512"
+            android:scaleType="centerInside"/>
+
+        <RelativeLayout
+            android:id="@+id/eRL"
+            android:layout_toRightOf="@id/img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:background="@android:color/darker_gray">
+
+            <ImageView
+                android:id="@+id/eimg"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:scaleType="centerInside" />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:visibility="gone"/>
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/pLL"
+            android:layout_below="@id/eRL"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_margin="5dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Load" />
+
+            <TextView
+                android:id="@+id/count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Using Time:"
+                android:textColor="@android:color/black" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/hLL"
+            android:layout_below="@id/pLL"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_margin="5dp"
+            android:orientation="horizontal"
+            android:focusable="true"
+            android:focusableInTouchMode="true">
+            <!--取消EditText自動focus問題:在EditText前，先讓某個處的layout可以被focusable就好-->
+            <Button
+                android:id="@+id/hbtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Hiding" />
+
+            <EditText
+                android:id="@+id/ET"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="9rK#3ddR5WDrV3Y!"
+                android:textColor="@android:color/black" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/dLL"
+            android:layout_below="@id/hLL"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_margin="5dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/dbtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Decoding" />
+
+            <TextView
+                android:id="@+id/dTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/black" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/RL"
+        android:padding="5dp">
+
+        <TextView
+            android:id="@+id/logTV"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textIsSelectable="true" />
+    </ScrollView>
+</RelativeLayout>
