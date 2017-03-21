@@ -37,12 +37,19 @@ public class mainActivity extends Activity {
     //an integer array that will store ARGB pixel values
 //    private int[][] rgbValues;
 
-    private ImageView iv, eiv;
-    private TextView tv, count, dTV;
-    private Button sbtn, hbtn, dbtn;
-    private ProgressBar pb;
-    private EditText et;
-    private long startTime, endTime, totTime;
+    private ImageView iv;   //原始選擇圖片
+    private ImageView eiv;  //藏密後圖片
+    private TextView tv;    //處理log
+    private TextView count; //處理時間
+    private TextView dTV;   //解密內容
+    private Button sbtn;    //選取圖片按鈕
+    private Button hbtn;    //開始藏密按鈕
+    private Button dbtn;    //開始取密按鈕
+    private ProgressBar pb; //藏密圖片，處理進度條
+    private EditText et;    //藏密文字
+    private long startTime; //開始處理時間
+    private long endTime;   //結束處理時間
+    private long totTime;   //總處理時間
     private BitmapARGB mBitmapARGB;
     private DataHiding mDataHiding;
     private DataHiding2 mDataHiding2;
