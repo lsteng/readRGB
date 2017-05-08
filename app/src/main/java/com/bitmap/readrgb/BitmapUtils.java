@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.util.Log;
-import android.widget.TextView;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -110,7 +109,8 @@ public class BitmapUtils {
     }
 
     //儲存圖片至檔案
-    public static void saveBitmapToFile(Context context, Bitmap bmp, TextView tv) {
+//    public static void saveBitmapToFile(Context context, Bitmap bmp, TextView tv) {
+    public static void saveBitmapToFile(Context context, Bitmap bmp) {
         FileOutputStream out = null;
         try {
 //            File path = new File (getSDCardPath()[0] + "/Download/DataHiding");
@@ -135,7 +135,8 @@ public class BitmapUtils {
             //PNG is a lossless format, the compression factor (100) is ignored
             bmp.compress(Bitmap.CompressFormat.PNG, 100, out);
 
-            tv.append("save img: "+path +fileName);
+//            tv.append("save img: "+path +fileName);
+            Log.d(TAG, "save img:"+path +fileName);
 
         } catch (Exception e) {
             Log.e(TAG, e.toString());

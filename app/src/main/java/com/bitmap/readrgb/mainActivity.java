@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -45,6 +46,7 @@ public class mainActivity extends Activity {
     private Button sbtn;    //選取圖片按鈕
     private Button hbtn;    //開始藏密按鈕
     private Button dbtn;    //開始取密按鈕
+    private Button pbtn;    //計算psnr按鈕
     private ProgressBar pb; //藏密圖片，處理進度條
     private EditText et;    //藏密文字
     private long startTime; //開始處理時間
@@ -75,6 +77,7 @@ public class mainActivity extends Activity {
         tv    = (TextView) findViewById(R.id.logTV);
         dbtn  = (Button) findViewById(R.id.dbtn);
         dTV   = (TextView) findViewById(R.id.dTV);
+        pbtn  = (Button) findViewById(R.id.psnr);
 
         iv.setImageResource(R.mipmap.lenna512);
         //load the image and use the bmp object to access it
@@ -112,6 +115,13 @@ public class mainActivity extends Activity {
                 ProcessTime(decodeCount);
 //                mDataDecoding.setData(eiv, tv);
                 mDataDecoding2.setData(eiv, tv);
+            }
+        });
+
+        pbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ProcessTime(PsnrCount);
             }
         });
     }
@@ -211,6 +221,7 @@ public class mainActivity extends Activity {
     public final static int hideStart   = 4;
     public final static int decodeCount = 5;
     public final static int decodeStart = 6;
+    public final static int PsnrCount   = 7;
 
     private Handler mHandler = new Handler();
     private Runnable runnable = new Runnable() {
@@ -249,15 +260,19 @@ public class mainActivity extends Activity {
                 pb.setVisibility(View.GONE);
                 eiv.setImageBitmap(mBitmapARGB.getBitmap());
 
-                new Thread() {
+                Thread thread = new Thread(){
+                    @Override
                     public void run() {
                         try {
-                            BitmapUtils.saveBitmapToFile(mainActivity.this, mBitmapARGB.getBitmap(), tv);
+//                            BitmapUtils.saveBitmapToFile(mainActivity.this, mBitmapARGB.getBitmap(), tv);
+                            BitmapUtils.saveBitmapToFile(mainActivity.this, mBitmapARGB.getBitmap());
+
                         } catch (Exception e) {
                             Log.e(TAG, e.toString());
                         }
                     }
-                }.start();
+                };
+                thread.start();
 
                 totTime = endTime - startTime;
                 count.setText("Using Time: " + ((float)totTime/1000));
@@ -297,6 +312,13 @@ public class mainActivity extends Activity {
 //                mDataDecoding.decodeData(dTV);
                 mDataDecoding2.decodeData(dTV);
                 break;
+
+            case PsnrCount:
+                BitmapDrawable mDrawable2 = (BitmapDrawable) eiv.getDrawable();
+                Bitmap bmp2 = mDrawable2.getBitmap();
+                PSNR.calculator(bmp, mBitmapARGB.getBitmap(), tv);
+                break;
+
         }
     }
 
