@@ -57,6 +57,7 @@ public class mainActivity extends Activity {
     private DataHiding2 mDataHiding2;
     private DataDecoding mDataDecoding;
     private DataDecoding2 mDataDecoding2;
+    private PSNR mPSNR;
 
     /**
      * Called when the activity is first created.
@@ -89,7 +90,6 @@ public class mainActivity extends Activity {
         //define the array size
 //        rgbValues = new int[bmp.getWidth()][bmp.getHeight()];
 
-        mBitmapARGB = new BitmapARGB(this);
         sbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -98,20 +98,21 @@ public class mainActivity extends Activity {
             }
         });
 
-        mDataHiding = new DataHiding(this);
-        mDataHiding2 = new DataHiding2(this);
         hbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mBitmapARGB = new BitmapARGB(mainActivity.this);
+                mDataHiding = new DataHiding(mainActivity.this);
+                mDataHiding2 = new DataHiding2(mainActivity.this);
                 ProcessTime(hideCount);
             }
         });
 
-        mDataDecoding = new DataDecoding(this);
-        mDataDecoding2 = new DataDecoding2(this);
         dbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mDataDecoding = new DataDecoding(mainActivity.this);
+                mDataDecoding2 = new DataDecoding2(mainActivity.this);
                 ProcessTime(decodeCount);
 //                mDataDecoding.setData(eiv, tv);
                 mDataDecoding2.setData(eiv, tv);
@@ -121,6 +122,7 @@ public class mainActivity extends Activity {
         pbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mPSNR= new PSNR(mainActivity.this);
                 ProcessTime(PsnrCount);
             }
         });
@@ -287,16 +289,13 @@ public class mainActivity extends Activity {
 
 //                BitmapDrawable mDrawable =  (BitmapDrawable) iv.getDrawable();
 //                Bitmap mBitmap = mDrawable.getBitmap();
-//                mBitmapARGB.getARGB(bmp, rgbValues, BitmapARGB.hide);
                 mBitmapARGB.getARGB(bmp, BitmapARGB.hide);
                 break;
             case hideStart:
                 tv.setText("");
                 String s = et.getText().toString();
-//                mDataHiding.setData(s, mBitmapARGB.getARGBvalues(), mBitmapARGB.getBitmap().getWidth(), mBitmapARGB.getBitmap().getHeight(), tv);
-//                mBitmapARGB.setRGB(mBitmapARGB.getBitmap(), mDataHiding.getARGBvalues(), BitmapARGB.save);
-                mDataHiding2.setData(s, mBitmapARGB.getARGBvalues(), mBitmapARGB.getBitmap().getWidth(), mBitmapARGB.getBitmap().getHeight(), tv);
-                mBitmapARGB.setRGB(mBitmapARGB.getBitmap(), mDataHiding2.getARGBvalues(), BitmapARGB.save);
+                mDataHiding2.setData(s, mBitmapARGB.getARGBvalues(), bmp.getWidth(), bmp.getHeight(), tv);
+                mBitmapARGB.setRGB(mDataHiding2.getARGBvalues(), BitmapARGB.save);
                 break;
 
             case decodeCount:
@@ -314,9 +313,11 @@ public class mainActivity extends Activity {
                 break;
 
             case PsnrCount:
+                BitmapDrawable mDrawable1 = (BitmapDrawable) iv.getDrawable();
+                Bitmap bmp1 = mDrawable1.getBitmap();
                 BitmapDrawable mDrawable2 = (BitmapDrawable) eiv.getDrawable();
                 Bitmap bmp2 = mDrawable2.getBitmap();
-                PSNR.calculator(bmp, mBitmapARGB.getBitmap(), tv);
+                mPSNR.calculator(bmp1, bmp2, tv);
                 break;
 
         }

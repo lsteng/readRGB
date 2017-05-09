@@ -8,6 +8,7 @@ package com.bitmap.readrgb;
  *********************************************************************
  */
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Handler;
@@ -16,9 +17,9 @@ import android.util.Log;
 import android.widget.TextView;
 
 public class PSNR {
-    public static double log10(double x) {
-        return Math.log(x)/Math.log(10);
-    }
+//    public static double log10(double x) {
+//        return Math.log(x)/Math.log(10);
+//    }
 
 //    public static void main (String[] args) {
 //        int     nrows, ncols;
@@ -53,18 +54,30 @@ public class PSNR {
 //        System.out.println("PSNR(max=" + peak + "): " + 10*log10((peak*peak)/mse));
 //    }
 
-    public static void calculator (final Bitmap originalImg, final Bitmap stegoImg, final TextView logTV) {
+    private String TAG = "PSNR";
+    private Context mContext;
+
+    public static synchronized PSNR getInstance(Context context){
+        return new PSNR(context);
+    }
+
+    public PSNR(Context context){
+        mContext = context;
+    }
+
+    public void calculator (final Bitmap originalImg, final Bitmap stegoImg, final TextView logTV) {
         final int rows = stegoImg.getWidth(); //[列(row)]寬
         final int columns = stegoImg.getHeight(); //[行(column)]高
 
-        Thread thread = new Thread() {
-            @Override
-            public void run() {
-                Message msg = new Message();
+//        Thread thread = new Thread() {
+//            @Override
+//            public void run() {
+//                Message msg = new Message();
 
                 int[][] originalPixel = new int[rows][columns];
                 int[][] stegoPixel = new int[rows][columns];
                 double noise = 0; //像素差平方和(雜訊)
+                int count = 0;
 
                 for (int i = 0; i < rows; i++) {
                     for (int j = 0; j < columns; j++) {
@@ -82,35 +95,41 @@ public class PSNR {
                         int b2 = Color.blue(color2);
 
 //                        if(originalPixel[i][j] != stegoPixel[i][j]){
-                        if(r1 != r2){
+                        if(r1 != r2 || g1 != g2 || b1 != b2){
                             noise = noise + Math.pow((originalPixel[i][j] - stegoPixel[i][j]), 2);
 
-                            Log.d("PSNR", "originalPixel["+i+","+j+"]: "+originalPixel[i][j]);
-                            Log.d("PSNR", "stegoPixel["+i+","+j+"]: "+stegoPixel[i][j]);
+                            count = count+1;
+                            Log.d(TAG, "no. "+count);
+                            Log.d(TAG, "originalPixel["+i+","+j+"]: "+originalPixel[i][j]);
+                            Log.d(TAG, "stegoPixel["+i+","+j+"]: "+stegoPixel[i][j]);
                         }
                     }
                 }
 
                 double mse = noise / (rows * columns); // Mean square error 均方根差
-                double psnr = 10 * log10(255 * 255 / mse); // Peak Signal to Noise Ratio 峰值信號雜訊比(dB)
-                Log.d("PSNR", "noise: "+noise);
-                Log.d("PSNR", "mse: "+mse);
-                Log.d("PSNR", "psnr: "+psnr);
-                //logTV.setText("mse: "+mse +"\n"+ "psnr: "+psnr);
+                // FrameSize是影像長度x寬度x通道數（灰階為1，彩色為3）
+                // 通常PSNR值越高表示品質越好，一般而言當PSNR的值<30db時，代表以人的肉眼看起來是不能容忍的範圍。因此大部分PSNR值皆要>30db。
+                // 但PSNR高，並不代表影像品質一定好，有時候還是必須靠人的肉眼輔助來判斷影像的品質才較為正確
+//                double psnr = 10 * log10(255 * 255 / mse); // Peak Signal to Noise Ratio 峰值信號雜訊比(dB)
+                double psnr = 10 * Math.abs(Math.log10((255*255)/mse)); // Peak Signal to Noise Ratio 峰值信號雜訊比(dB)
+                Log.d(TAG, "noise: "+noise);
+                Log.d(TAG, "mse: "+mse);
+                Log.d(TAG, "psnr: "+psnr);
+                logTV.setText("mse: "+mse +"\n"+ "psnr: "+psnr);
 
-                msg.what = msgID; //設定 Handler 要接收的事件ID
-                mHandler.sendMessage (msg) ; //送出事件訊息
-            }
-        };
-        thread.start();
+//                msg.what = msgID; //設定 Handler 要接收的事件ID
+//                mHandler.sendMessage (msg) ; //送出事件訊息
+//            }
+//        };
+//        thread.start();
     }
 
     /* 自定Handler
     所有透過 myMessageHandler.sendMessage 方法的 事件訊息
     都會到這集合並至 public void handleMessage ( Message msg ) 中執行
     */
-    public final static int msgID = 30;
-    public static Handler mHandler = new Handler() {
+    private final int msgID = 30;
+    private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
 //            if(msg.what == msgID) {
