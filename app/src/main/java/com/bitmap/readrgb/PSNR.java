@@ -88,7 +88,7 @@ public class PSNR {
                 double mse = noise / (rows * columns * 3); // Mean square error 均方根差
                 // FrameSize是影像長度x寬度x通道數（灰階為1，彩色為3）
                 // 通常PSNR值越高表示品質越好，一般而言當PSNR的值<30db時，代表以人的肉眼看起來是不能容忍的範圍。因此大部分PSNR值皆要>30db。
-                // 但PSNR高，並不代表影像品質一定好，有時候還是必須靠人的肉眼輔助來判斷影像的品質才較為正確嗯嗯
+                // 但PSNR高，並不代表影像品質一定好，有時候還是必須靠人的肉眼輔助來判斷影像的品質才較為正確
                 double psnr = 10 * Math.abs(Math.log10((255*255)/mse)); // Peak Signal to Noise Ratio 峰值信號雜訊比(dB)
                 Log.d(TAG, "noise: "+noise);
                 Log.d(TAG, "mse: "+mse);
