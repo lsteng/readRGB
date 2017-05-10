@@ -66,18 +66,18 @@ public class PSNR {
 
 //                            noise = noise + Math.pow((originalPixel[i][j] - stegoPixel[i][j]), 2);
                             if(r1 != r2){
-                                Log.d(TAG, "r1: "+r1);
-                                Log.d(TAG, "r2: "+r2);
+//                                Log.d(TAG, "r1: "+r1);
+//                                Log.d(TAG, "r2: "+r2);
                                 noise = noise + Math.pow((r1 - r2), 2);
                             }
                             if(g1 != g2){
-                                Log.d(TAG, "g1: "+g1);
-                                Log.d(TAG, "g2: "+g2);
+//                                Log.d(TAG, "g1: "+g1);
+//                                Log.d(TAG, "g2: "+g2);
                                 noise = noise + Math.pow((g1 - g2), 2);
                             }
                             if(b1 != b2){
-                                Log.d(TAG, "b1: "+b1);
-                                Log.d(TAG, "b2: "+b2);
+//                                Log.d(TAG, "b1: "+b1);
+//                                Log.d(TAG, "b2: "+b2);
                                 noise = noise + Math.pow((b1 - b2), 2);
                             }
                         }
@@ -88,13 +88,15 @@ public class PSNR {
                 double mse = noise / (rows * columns * 3); // Mean square error 均方根差
                 // FrameSize是影像長度x寬度x通道數（灰階為1，彩色為3）
                 // 通常PSNR值越高表示品質越好，一般而言當PSNR的值<30db時，代表以人的肉眼看起來是不能容忍的範圍。因此大部分PSNR值皆要>30db。
-                // 但PSNR高，並不代表影像品質一定好，有時候還是必須靠人的肉眼輔助來判斷影像的品質才較為正確
+                // 但PSNR高，並不代表影像品質一定好，有時候還是必須靠人的肉眼輔助來判斷影像的品質才較為正確嗯嗯
                 double psnr = 10 * Math.abs(Math.log10((255*255)/mse)); // Peak Signal to Noise Ratio 峰值信號雜訊比(dB)
                 Log.d(TAG, "noise: "+noise);
                 Log.d(TAG, "mse: "+mse);
                 Log.d(TAG, "psnr: "+psnr);
                 logTV.setText("mse: "+mse +"\n"+ "psnr: "+psnr);
 
+
+                ((mainActivity)mContext).ProcessTime(mainActivity.endCount);
 //                msg.what = msgID; //設定 Handler 要接收的事件ID
 //                mHandler.sendMessage (msg) ; //送出事件訊息
 //            }
@@ -110,9 +112,9 @@ public class PSNR {
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-//            if(msg.what == msgID) {
-//                ((mainActivity)mContext).ProcessTime(mainActivity.decodeStart);
-//            }
+            if(msg.what == msgID) {
+                ((mainActivity)mContext).ProcessTime(mainActivity.endCount);
+            }
         }
     };
 }

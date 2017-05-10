@@ -23,6 +23,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -126,6 +127,8 @@ public class mainActivity extends Activity {
                 ProcessTime(PsnrCount);
             }
         });
+
+        chkDataHidingImg();
     }
 
     @Override
@@ -313,6 +316,12 @@ public class mainActivity extends Activity {
                 break;
 
             case PsnrCount:
+                //開始時間
+                startTime = System.currentTimeMillis();
+                totTime = 0;
+                mHandler.postDelayed(runnable, 100);
+                pb.setVisibility(View.VISIBLE);
+
                 BitmapDrawable mDrawable1 = (BitmapDrawable) iv.getDrawable();
                 Bitmap bmp1 = mDrawable1.getBitmap();
                 BitmapDrawable mDrawable2 = (BitmapDrawable) eiv.getDrawable();
@@ -320,6 +329,20 @@ public class mainActivity extends Activity {
                 mPSNR.calculator(bmp1, bmp2, tv);
                 break;
 
+        }
+    }
+
+    //檢查是否有藏密圖片
+    private void chkDataHidingImg(){
+        try{
+            String pathName = getExternalCacheDir().getAbsolutePath()+"/pic/datahiding.png";
+            File f=new File(pathName);
+            if(f.exists()){
+                Bitmap stegobmp = BitmapFactory.decodeFile(pathName);
+                eiv.setImageBitmap(stegobmp);
+            }
+        }catch (Exception e) {
+            Log.e(TAG, e.toString());
         }
     }
 

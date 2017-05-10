@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 
 /**
  * Created by 03070048 on 2016/9/10.
@@ -67,16 +66,12 @@ public class BitmapARGB {
 ////                                //"  Char:"+Character.toString((char)(r+33))+Character.toString((char)(g+33))+Character.toString((char)(b+33)) +
 ////                                "\n");
                         //ResultMsg = Result ; //將接收回來的字串放至 ResultMsg 變數中。
-
-                        if (i == rows-1 && j == columns-1) {
-                            argbValues = rgbValues;
-                            msg.what = msgID; //設定 Handler 要接收的事件ID
-                            getARGBHandler.sendMessage (msg) ; //送出事件訊息
-                        }
                     }
                 }
-                ;
                 //Do something with the ARGB value array
+                argbValues = rgbValues;
+                msg.what = msgID; //設定 Handler 要接收的事件ID
+                getARGBHandler.sendMessage (msg) ; //送出事件訊息
             }
         };
         thread.start();
@@ -129,27 +124,25 @@ public class BitmapARGB {
 //                        Log.d("Pixel Value", "Color.rgb: "+Color.rgb(r,g,b));
 //                        rgbValues[i][j] = Color.rgb(r,g,b);
 
-                        int color1 = mBitmap.getPixel(i, j);;
-                        int r1 = Color.red(color1);
-                        int g1 = Color.green(color1);
-                        int b1 = Color.blue(color1);
-
-                        if(r != r1 || g != g1 || b != b1){
-                            count = count+1;
-                            Log.d(TAG, "no. "+count);
-                            Log.d(TAG, "originalPixel["+i+","+j+"]: "+color);
-                            Log.d(TAG, "stegoPixel["+i+","+j+"]: "+color1);
-                        }
+//                        int color1 = mBitmap.getPixel(i, j);;
+//                        int r1 = Color.red(color1);
+//                        int g1 = Color.green(color1);
+//                        int b1 = Color.blue(color1);
+//
+//                        if(r != r1 || g != g1 || b != b1){
+//                            count = count+1;
+//                            Log.d(TAG, "no. "+count);
+//                            Log.d(TAG, "originalPixel["+i+","+j+"]: "+color);
+//                            Log.d(TAG, "stegoPixel["+i+","+j+"]: "+color1);
+//                        }
 
 //                        bmp.setPixel(i, j, Color.argb(a, r, g, b));
                         mBitmap.setPixel(i, j, Color.rgb(r, g, b));
-
-                        if (i == rows-1 && j == columns-1) {
-                            msg.what = msgID; //設定 Handler 要接收的事件ID
-                            setRGBHandler.sendMessage (msg) ; //送出事件訊息
-                        }
                     }
                 }
+
+                msg.what = msgID; //設定 Handler 要接收的事件ID
+                setRGBHandler.sendMessage (msg) ; //送出事件訊息
             }
         };
         thread.start();
