@@ -17,43 +17,6 @@ import android.util.Log;
 import android.widget.TextView;
 
 public class PSNR {
-//    public static double log10(double x) {
-//        return Math.log(x)/Math.log(10);
-//    }
-
-//    public static void main (String[] args) {
-//        int     nrows, ncols;
-//        int     img1[][], img2[][];
-//        double  peak, signal, noise, mse;
-//
-//        if (args.length != 4) {
-//            System.out.println("Usage: Psnr <nrows> <ncols> <img1> <img2>");
-//            return;
-//        }
-//        nrows = Integer.parseInt(args[0]);
-//        ncols = Integer.parseInt(args[1]);
-//        img1 = new int[nrows][ncols];
-//        img2 = new int[nrows][ncols];
-////        ArrayIO.readByteArray(args[2], img1, nrows, ncols);
-////        ArrayIO.readByteArray(args[3], img2, nrows, ncols);
-//
-//        signal = noise = peak = 0;
-//        for (int i=0; i<nrows; i++) {
-//            for (int j=0; j<ncols; j++) {
-//                signal += img1[i][j] * img1[i][j];
-//                noise += (img1[i][j] - img2[i][j]) * (img1[i][j] - img2[i][j]);
-//                if (peak < img1[i][j])
-//                    peak = img1[i][j];
-//            }
-//        }
-//
-//        mse = noise/(nrows*ncols); // Mean square error 均方根差
-//        System.out.println("MSE: " + mse);
-//        System.out.println("SNR: " + 10*log10(signal/noise));
-//        System.out.println("PSNR(max=255): " + (10*log10(255*255/mse)));
-//        System.out.println("PSNR(max=" + peak + "): " + 10*log10((peak*peak)/mse));
-//    }
-
     private String TAG = "PSNR";
     private Context mContext;
 
@@ -96,21 +59,36 @@ public class PSNR {
 
 //                        if(originalPixel[i][j] != stegoPixel[i][j]){
                         if(r1 != r2 || g1 != g2 || b1 != b2){
-                            noise = noise + Math.pow((originalPixel[i][j] - stegoPixel[i][j]), 2);
-
                             count = count+1;
                             Log.d(TAG, "no. "+count);
-                            Log.d(TAG, "originalPixel["+i+","+j+"]: "+originalPixel[i][j]);
-                            Log.d(TAG, "stegoPixel["+i+","+j+"]: "+stegoPixel[i][j]);
+//                            Log.d(TAG, "originalPixel["+i+","+j+"]: "+originalPixel[i][j]);
+//                            Log.d(TAG, "stegoPixel["+i+","+j+"]: "+stegoPixel[i][j]);
+
+//                            noise = noise + Math.pow((originalPixel[i][j] - stegoPixel[i][j]), 2);
+                            if(r1 != r2){
+                                Log.d(TAG, "r1: "+r1);
+                                Log.d(TAG, "r2: "+r2);
+                                noise = noise + Math.pow((r1 - r2), 2);
+                            }
+                            if(g1 != g2){
+                                Log.d(TAG, "g1: "+g1);
+                                Log.d(TAG, "g2: "+g2);
+                                noise = noise + Math.pow((g1 - g2), 2);
+                            }
+                            if(b1 != b2){
+                                Log.d(TAG, "b1: "+b1);
+                                Log.d(TAG, "b2: "+b2);
+                                noise = noise + Math.pow((b1 - b2), 2);
+                            }
                         }
                     }
                 }
 
-                double mse = noise / (rows * columns); // Mean square error 均方根差
+//                double mse = noise / (rows * columns); // Mean square error 均方根差
+                double mse = noise / (rows * columns * 3); // Mean square error 均方根差
                 // FrameSize是影像長度x寬度x通道數（灰階為1，彩色為3）
                 // 通常PSNR值越高表示品質越好，一般而言當PSNR的值<30db時，代表以人的肉眼看起來是不能容忍的範圍。因此大部分PSNR值皆要>30db。
                 // 但PSNR高，並不代表影像品質一定好，有時候還是必須靠人的肉眼輔助來判斷影像的品質才較為正確
-//                double psnr = 10 * log10(255 * 255 / mse); // Peak Signal to Noise Ratio 峰值信號雜訊比(dB)
                 double psnr = 10 * Math.abs(Math.log10((255*255)/mse)); // Peak Signal to Noise Ratio 峰值信號雜訊比(dB)
                 Log.d(TAG, "noise: "+noise);
                 Log.d(TAG, "mse: "+mse);
