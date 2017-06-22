@@ -23,6 +23,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bitmap.readrgb.util.OkHttp3.Retrofit2;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -129,6 +131,8 @@ public class mainActivity extends Activity {
         });
 
         chkDataHidingImg();
+
+        Retrofit2.requestLaunchData();
     }
 
     @Override
