@@ -23,7 +23,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bitmap.readrgb.util.OkHttp3.Retrofit2;
+import com.bitmap.readrgb.util.connect_Square.Retrofit2;
 
 import java.io.File;
 import java.io.IOException;
@@ -132,6 +132,9 @@ public class mainActivity extends Activity {
 
         chkDataHidingImg();
 
+        // OkHttp3
+//        OkHttp3 mOkHttp3 = new OkHttp3(mainActivity.this);
+        // Retrofit2
         Retrofit2.requestLaunchData();
     }
 

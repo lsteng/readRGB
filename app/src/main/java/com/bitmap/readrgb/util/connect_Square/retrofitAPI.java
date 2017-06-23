@@ -1,4 +1,4 @@
-package com.bitmap.readrgb.util.OkHttp3;
+package com.bitmap.readrgb.util.connect_Square;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
