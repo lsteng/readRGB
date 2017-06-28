@@ -135,7 +135,8 @@ public class mainActivity extends Activity {
         // OkHttp3
 //        OkHttp3 mOkHttp3 = new OkHttp3(mainActivity.this);
         // Retrofit2
-        Retrofit2.requestLaunchData();
+//        Retrofit2.requestLaunchData();
+        Retrofit2.requestSearchData();
     }
 
     @Override

@@ -26,8 +26,8 @@ dependencies {
 
     //Retrofit 2.0 + OkHttp 3.0 + JSON 網路请求
     compile 'com.jakewharton:butterknife:7.0.1'
-    compile 'com.squareup.retrofit2:retrofit:2.0.1'
-    compile 'com.squareup.retrofit2:converter-gson:2.0.1'
+    compile 'com.squareup.retrofit2:retrofit:2.1.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.1.0'
     compile 'com.squareup.okhttp3:logging-interceptor:3.1.2'
     compile 'com.squareup.retrofit2:adapter-rxjava:2.0.1'
     compile 'io.reactivex:rxandroid:1.1.0'
