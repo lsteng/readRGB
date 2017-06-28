@@ -76,14 +76,7 @@ public class Retrofit2 {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-//        Map<String, String> map = new HashMap<String, String>();
-//        map.put("keyword", "海尼根");
-//        map.put("FromDevice", "0");
-//        map.put("device_id", "null");
-//        map.put("count", "20");
-
         retrofitAPI repo = retrofit.create(retrofitAPI.class);
-//        Call<SearchDataInfo.PostQueryInfo> call = repo.searchDataGetCall("海尼根", "0", "null", "20");
         Call<SearchDataInfo> call = repo.searchDataGetCall("海尼根", "0", "null", "20");
 
             call.enqueue(new Callback<SearchDataInfo>() {
