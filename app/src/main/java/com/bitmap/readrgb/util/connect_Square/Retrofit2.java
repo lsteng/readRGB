@@ -1,5 +1,6 @@
 package com.bitmap.readrgb.util.connect_Square;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.bitmap.readrgb.datainfo.LaunchDataInfo;
@@ -25,8 +26,25 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Retrofit2 {
     private final static String TAG = "retrofit2";
+    private Context mContext;
+    private LaunchPageListener mLaunchPageListener = null;
 
-    public static void requestLaunchData(){
+    public static synchronized Retrofit2 getInstance(Context context){
+        return new Retrofit2(context);
+    }
+
+    private Retrofit2(Context context){
+        mContext = context;
+    }
+
+    public interface LaunchPageListener{
+        void setImage(String url);
+    }
+    public void setLaunchPageListener(LaunchPageListener mLaunchPageListener){
+        this.mLaunchPageListener = mLaunchPageListener;
+    }
+
+    public void requestLaunchData(){
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://sun.iset.com.tw/")
@@ -44,6 +62,10 @@ public class Retrofit2 {
                     Log.d(TAG, "android v" + mLaunchDataInfo.version.android);
                     Log.d(TAG, "launchPhoto default: " + mLaunchDataInfo.launchPhoto.defaultFile);
                     Log.d(TAG, "launchPhoto season: " + mLaunchDataInfo.launchPhoto.seasonFile);
+
+                    if(mLaunchPageListener!=null){
+                        mLaunchPageListener.setImage(mLaunchDataInfo.launchPhoto.defaultFile);
+                    }
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -70,7 +92,7 @@ public class Retrofit2 {
         });
     }
 
-    public static void requestSearchData(){
+    public void requestSearchData(){
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://mars.iset.com.tw/")
                 .addConverterFactory(GsonConverterFactory.create())
@@ -79,7 +101,7 @@ public class Retrofit2 {
         retrofitAPI repo = retrofit.create(retrofitAPI.class);
         Call<SearchDataInfo> call = repo.searchDataGetCall("海尼根", "0", "null", "20");
 
-            call.enqueue(new Callback<SearchDataInfo>() {
+        call.enqueue(new Callback<SearchDataInfo>() {
             @Override
             public void onResponse(Call<SearchDataInfo> call, Response<SearchDataInfo> response) {
                 SearchDataInfo mSearchDataInfo = response.body();

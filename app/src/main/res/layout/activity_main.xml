@@ -21,40 +21,59 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <ImageView
-            android:id="@+id/img"
-            android:layout_width="150dp"
+        <LinearLayout
+            android:id="@+id/LL"
+            android:layout_width="match_parent"
             android:layout_height="150dp"
-            android:layout_margin="5dp"
-            android:src="@mipmap/lenna512"
-            android:scaleType="centerInside"/>
-
-        <RelativeLayout
-            android:id="@+id/eRL"
-            android:layout_toRightOf="@id/img"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="5dp"
-            android:background="@android:color/darker_gray">
+            android:orientation="horizontal"
+            android:padding="3dp">
 
             <ImageView
-                android:id="@+id/eimg"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:scaleType="centerInside" />
+                android:id="@+id/launchIV"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@mipmap/ic_launcher"
+                android:layout_weight="1"
+                android:layout_marginRight="3dp"/>
 
-            <ProgressBar
-                android:id="@+id/progressBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:visibility="gone"/>
+            <ImageView
+                android:id="@+id/img"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:src="@mipmap/lenna512"
+                android:scaleType="centerInside"
+                android:layout_weight="2"
+                android:layout_marginRight="3dp"/>
 
-        </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/eRL"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:background="@android:color/darker_gray"
+                android:layout_weight="2">
+
+                <ImageView
+                    android:id="@+id/eimg"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerInside" />
+
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:visibility="gone"/>
+
+            </RelativeLayout>
+
+
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/pLL"
-            android:layout_below="@id/eRL"
+            android:layout_below="@id/LL"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"

@@ -41,6 +41,7 @@ public class mainActivity extends Activity {
     //an integer array that will store ARGB pixel values
 //    private int[][] rgbValues;
 
+    private ImageView liv;  //launch page
     private ImageView iv;   //原始選擇圖片
     private ImageView eiv;  //藏密後圖片
     private TextView tv;    //處理log
@@ -71,6 +72,7 @@ public class mainActivity extends Activity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         setContentView(R.layout.activity_main);
+        liv   = (ImageView) findViewById(R.id.launchIV);
         iv    = (ImageView) findViewById(R.id.img);
         eiv   = (ImageView) findViewById(R.id.eimg);
         count = (TextView) findViewById(R.id.count);
@@ -135,8 +137,15 @@ public class mainActivity extends Activity {
         // OkHttp3
 //        OkHttp3 mOkHttp3 = new OkHttp3(mainActivity.this);
         // Retrofit2
-//        Retrofit2.requestLaunchData();
-        Retrofit2.requestSearchData();
+        Retrofit2 mRetrofit2 = Retrofit2.getInstance(mainActivity.this);
+        mRetrofit2.setLaunchPageListener(new Retrofit2.LaunchPageListener(){
+            @Override
+            public void setImage(String url) {
+                mainApplication.imageLoader.displayImage(url, liv, mainApplication.options);
+                tv.setText("getLaunchPage: " + url);
+            }
+        });
+        mRetrofit2.requestLaunchData();
     }
 
     @Override
