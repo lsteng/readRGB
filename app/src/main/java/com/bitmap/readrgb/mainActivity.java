@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,6 +54,7 @@ public class mainActivity extends Activity {
     private Button pbtn;    //計算psnr按鈕
     private ProgressBar pb; //藏密圖片，處理進度條
     private EditText et;    //藏密文字
+    private RadioGroup mRG; //選擇藏解密方法
     private long startTime; //開始處理時間
     private long endTime;   //結束處理時間
     private long totTime;   //總處理時間
@@ -84,6 +86,7 @@ public class mainActivity extends Activity {
         dbtn  = (Button) findViewById(R.id.dbtn);
         dTV   = (TextView) findViewById(R.id.dTV);
         pbtn  = (Button) findViewById(R.id.psnr);
+        mRG   = (RadioGroup) findViewById(R.id.mRG);
 
         iv.setImageResource(R.mipmap.lenna512);
         //load the image and use the bmp object to access it
@@ -103,24 +106,47 @@ public class mainActivity extends Activity {
             }
         });
 
+
+        mRG.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
+                setMethod(checkedId);
+            }
+        });
+        setMethod(mRG.getCheckedRadioButtonId());
+
         hbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mBitmapARGB = new BitmapARGB(mainActivity.this);
-                mDataHiding = new DataHiding(mainActivity.this);
-                mDataHiding2 = new DataHiding2(mainActivity.this);
                 ProcessTime(hideCount);
+                switch(methodID){
+                    case method1:
+                        mDataHiding = new DataHiding(mainActivity.this);
+                        break;
+                    case method2:
+                    case method3:
+                        mDataHiding2 = new DataHiding2(mainActivity.this);
+                        break;
+                }
             }
         });
 
         dbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mDataDecoding = new DataDecoding(mainActivity.this);
-                mDataDecoding2 = new DataDecoding2(mainActivity.this);
                 ProcessTime(decodeCount);
-//                mDataDecoding.setData(eiv, tv);
-                mDataDecoding2.setData(eiv, tv);
+                switch(methodID){
+                    case method1:
+                        mDataDecoding = new DataDecoding(mainActivity.this);
+                        mDataDecoding.setData(eiv, tv);
+                        break;
+                    case method2:
+                    case method3:
+                        mDataDecoding2 = new DataDecoding2(mainActivity.this);
+                        mDataDecoding2.setData(eiv, tv);
+                        break;
+                }
             }
         });
 
@@ -146,6 +172,23 @@ public class mainActivity extends Activity {
             }
         });
         mRetrofit2.requestLaunchData();
+    }
+
+    private final int method1 = 1;
+    private final int method2 = 2;
+    private final int method3 = 3;
+    private int methodID = method2;
+    private void setMethod(int checkedId){
+        switch(checkedId){
+            case R.id.opt1:
+                methodID = method1;
+                break;
+            case R.id.opt2:
+            case R.id.opt3:
+                methodID = method2;
+                break;
+        }
+//        Toast.makeText(getApplicationContext(), ""+methodID, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -314,8 +357,17 @@ public class mainActivity extends Activity {
             case hideStart:
                 tv.setText("");
                 String s = et.getText().toString();
-                mDataHiding2.setData(s, mBitmapARGB.getARGBvalues(), bmp.getWidth(), bmp.getHeight(), tv);
-                mBitmapARGB.setRGB(mDataHiding2.getARGBvalues(), BitmapARGB.save);
+                switch(methodID){
+                    case method1:
+                        mDataHiding.setData(s, mBitmapARGB.getARGBvalues(), bmp.getWidth(), bmp.getHeight(), tv);
+                        mBitmapARGB.setRGB(mDataHiding.getARGBvalues(), BitmapARGB.save);
+                        break;
+                    case method2:
+                    case method3:
+                        mDataHiding2.setData(s, mBitmapARGB.getARGBvalues(), bmp.getWidth(), bmp.getHeight(), tv);
+                        mBitmapARGB.setRGB(mDataHiding2.getARGBvalues(), BitmapARGB.save);
+                        break;
+                }
                 break;
 
             case decodeCount:
@@ -328,8 +380,15 @@ public class mainActivity extends Activity {
                 break;
             case decodeStart:
                 dTV.setText("");
-//                mDataDecoding.decodeData(dTV);
-                mDataDecoding2.decodeData(dTV);
+                switch(methodID){
+                    case method1:
+                        mDataDecoding.decodeData(dTV);
+                        break;
+                    case method2:
+                    case method3:
+                        mDataDecoding2.decodeData(dTV);
+                        break;
+                }
                 break;
 
             case PsnrCount:
