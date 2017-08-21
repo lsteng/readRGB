@@ -1,15 +1,9 @@
-package com.bitmap.readrgb;
+package com.bitmap.readrgb.lab;
 
 import android.content.Context;
 import android.graphics.Color;
 import android.util.Log;
 import android.widget.TextView;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
 
 /**
  * Created by 03070048 on 2016/9/10.

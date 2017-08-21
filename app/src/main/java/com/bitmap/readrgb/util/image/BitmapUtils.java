@@ -1,4 +1,4 @@
-package com.bitmap.readrgb;
+package com.bitmap.readrgb.util.image;
 
 import android.content.Context;
 import android.content.res.Resources;

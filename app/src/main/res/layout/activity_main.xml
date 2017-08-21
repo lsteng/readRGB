@@ -9,7 +9,7 @@
     <!--android:background="#888888"-->
     <!--android:layout_centerInParent="true"-->
     <!--&gt;-->
-    <!--<com.bitmap.readrgb.RecordingView-->
+    <!--<com.bitmap.readrgb.view.RecordingView-->
     <!--android:id="@+id/uvMeter"-->
     <!--android:layout_width="wrap_content"-->
     <!--android:layout_height="wrap_content"-->

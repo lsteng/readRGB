@@ -1,4 +1,4 @@
-package com.bitmap.readrgb;
+package com.bitmap.readrgb.lab;
 
 /*
  *********************************************************************
@@ -15,6 +15,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.widget.TextView;
+
+import com.bitmap.readrgb.mainActivity;
 
 public class PSNR {
     private String TAG = "PSNR";

@@ -1,4 +1,4 @@
-package com.bitmap.readrgb;
+package com.bitmap.readrgb.lab;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -7,6 +7,8 @@ import android.graphics.Color;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bitmap.readrgb.mainActivity;
 
 /**
  * Created by 03070048 on 2016/9/12.

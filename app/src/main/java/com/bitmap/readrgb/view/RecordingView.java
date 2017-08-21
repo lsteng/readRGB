@@ -1,4 +1,4 @@
-package com.bitmap.readrgb;
+package com.bitmap.readrgb.view;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -9,6 +9,8 @@ import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
 import android.view.View;
+
+import com.bitmap.readrgb.R;
 
 import java.util.Random;
 

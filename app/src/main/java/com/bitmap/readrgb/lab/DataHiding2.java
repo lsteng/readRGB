@@ -1,4 +1,4 @@
-package com.bitmap.readrgb;
+package com.bitmap.readrgb.lab;
 
 import android.content.Context;
 import android.graphics.Color;

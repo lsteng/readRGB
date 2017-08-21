@@ -1,10 +1,12 @@
-package com.bitmap.readrgb;
+package com.bitmap.readrgb.util.image;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
+
+import com.bitmap.readrgb.mainActivity;
 
 /**
  * Created by 03070048 on 2016/9/10.
@@ -15,7 +17,6 @@ public class BitmapARGB {
     private Bitmap mBitmap;
     //an integer array that will store ARGB pixel values
     private int[][] argbValues;
-
     private Context mContext;
 
     private int rows; //[列(row)]寬
@@ -28,7 +29,7 @@ public class BitmapARGB {
     public final static int save   = 4;
     public String ResultMsg = "";  //宣告一變數承接Thread要向外傳的值。
 
-    public static synchronized BitmapARGB  getInstance(Context context){
+    public static synchronized BitmapARGB getInstance(Context context){
         return new BitmapARGB(context);
     }
 
