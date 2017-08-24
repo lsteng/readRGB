@@ -30,11 +30,13 @@ import com.bitmap.readrgb.lab.DataDecoding3;
 import com.bitmap.readrgb.lab.DataHiding;
 import com.bitmap.readrgb.lab.DataHiding2;
 import com.bitmap.readrgb.lab.DataHiding3;
+import com.bitmap.readrgb.lab.LaunchPageInfo;
 import com.bitmap.readrgb.lab.PSNR;
 import com.bitmap.readrgb.util.connect_Square.Retrofit2;
 import com.bitmap.readrgb.util.image.BitmapARGB;
 import com.bitmap.readrgb.util.image.BitmapUtils;
 import com.bitmap.readrgb.util.image.SelectImage;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import java.io.File;
 import java.io.IOException;
@@ -77,6 +79,7 @@ public class mainActivity extends Activity {
     private DataDecoding3 mDataDecoding3;
     private PSNR mPSNR;
     private int mSeed = 123456;
+    private LaunchPageInfo mLaunchPageInfo;
 
     /**
      * Called when the activity is first created.
@@ -185,11 +188,26 @@ public class mainActivity extends Activity {
         mRetrofit2.setLaunchPageListener(new Retrofit2.LaunchPageListener(){
             @Override
             public void setImage(String url) {
-                mainApplication.imageLoader.displayImage(url, liv, mainApplication.options);
-                tv.setText("getLaunchPage: " + url);
+                mainApplication.imageLoader.displayImage(url, liv, mainApplication.options, new LaunchPageDisplayListener());
+                tv.setText("getLaunchPage: " + url +"\n");
             }
         });
         mRetrofit2.requestLaunchData();
+    }
+
+    class LaunchPageDisplayListener extends SimpleImageLoadingListener {
+        @Override
+        public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+            if (loadedImage != null) {
+//                ImageView imageView = (ImageView) view;
+                mLaunchPageInfo = new LaunchPageInfo(mainActivity.this);
+                loadLaunchPageInfo();
+            }
+        }
+    }
+    private void loadLaunchPageInfo(){
+        ProcessTime(CountStart);
+        mLaunchPageInfo.setData(liv, tv, LaunchPageInfo.decodeDataType);
     }
 
     private final int method1 = 1;
@@ -281,25 +299,10 @@ public class mainActivity extends Activity {
 //            tv.append("\n"+"bmp scale: "+bmp.getWidth()+"_"+bmp.getHeight());
 
             iv.setImageBitmap(bmp);
-
-            //亂數種子測試
-//            Random mRandom1 = new Random();
-//            Random mRandom2 = new Random();
-//            int mSeed = 123456;
-//            mRandom1.setSeed(mSeed);
-//            mRandom2.setSeed(mSeed);
-//            tv.append("\n");
-//            for (int i=0; i<10; i++){
-//                tv.append(mRandom1.nextInt(100)+",");
-//            }
-//            tv.append("\n");
-//            for (int i=0; i<10; i++){
-//                tv.append(mRandom2.nextInt(100)+",");
-//            }
         }
     }
 
-    public final static int loadCount   = 0;
+    public final static int CountStart  = 0;
     public final static int endCount    = 1;
     public final static int endSaveCount= 2;
     public final static int hideCount   = 3;
@@ -307,6 +310,8 @@ public class mainActivity extends Activity {
     public final static int decodeCount = 5;
     public final static int decodeStart = 6;
     public final static int PsnrCount   = 7;
+    public final static int decodeLP    = 8;
+    public final static int hideLP      = 9;
 
     private Handler mHandler = new Handler();
     private Runnable runnable = new Runnable() {
@@ -318,14 +323,14 @@ public class mainActivity extends Activity {
     };
     public void ProcessTime(int type){
         switch (type){
-//            case loadCount:
-//                //開始時間
-//                startTime = System.currentTimeMillis();
-//                totTime = 0;
-//                mHandler.postDelayed(runnable, 100);
+            case CountStart:
+                //開始時間
+                startTime = System.currentTimeMillis();
+                totTime = 0;
+                mHandler.postDelayed(runnable, 100);
 //                pb.setVisibility(View.VISIBLE);
 //                mBitmapARGB.getARGB(bmp, rgbValues, BitmapARGB.load);
-//                break;
+                break;
 
             case endCount:
                 //結束時間

@@ -27,6 +27,7 @@ public class BitmapARGB {
     public final static int hide   = 2;
     public final static int decode = 3;
     public final static int save   = 4;
+    public final static int saveLP = 5;
     public String ResultMsg = "";  //宣告一變數承接Thread要向外傳的值。
 
     public static synchronized BitmapARGB getInstance(Context context){
