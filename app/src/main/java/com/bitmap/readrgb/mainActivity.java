@@ -26,12 +26,14 @@ import android.widget.Toast;
 
 import com.bitmap.readrgb.lab.DataDecoding;
 import com.bitmap.readrgb.lab.DataDecoding2;
+import com.bitmap.readrgb.lab.DataDecoding3;
 import com.bitmap.readrgb.lab.DataHiding;
 import com.bitmap.readrgb.lab.DataHiding2;
+import com.bitmap.readrgb.lab.DataHiding3;
+import com.bitmap.readrgb.lab.PSNR;
 import com.bitmap.readrgb.util.connect_Square.Retrofit2;
 import com.bitmap.readrgb.util.image.BitmapARGB;
 import com.bitmap.readrgb.util.image.BitmapUtils;
-import com.bitmap.readrgb.lab.PSNR;
 import com.bitmap.readrgb.util.image.SelectImage;
 
 import java.io.File;
@@ -69,9 +71,12 @@ public class mainActivity extends Activity {
     private BitmapARGB mBitmapARGB;
     private DataHiding mDataHiding;
     private DataHiding2 mDataHiding2;
+    private DataHiding3 mDataHiding3;
     private DataDecoding mDataDecoding;
     private DataDecoding2 mDataDecoding2;
+    private DataDecoding3 mDataDecoding3;
     private PSNR mPSNR;
+    private int mSeed = 123456;
 
     /**
      * Called when the activity is first created.
@@ -133,8 +138,10 @@ public class mainActivity extends Activity {
                         mDataHiding = new DataHiding(mainActivity.this);
                         break;
                     case method2:
-                    case method3:
                         mDataHiding2 = new DataHiding2(mainActivity.this);
+                        break;
+                    case method3:
+                        mDataHiding3 = new DataHiding3(mainActivity.this);
                         break;
                 }
             }
@@ -150,9 +157,12 @@ public class mainActivity extends Activity {
                         mDataDecoding.setData(eiv, tv);
                         break;
                     case method2:
-                    case method3:
                         mDataDecoding2 = new DataDecoding2(mainActivity.this);
-                        mDataDecoding2.setData(eiv, tv);
+                        mDataDecoding2.setData(eiv, mSeed, tv);
+                        break;
+                    case method3:
+                        mDataDecoding3 = new DataDecoding3(mainActivity.this);
+                        mDataDecoding3.setData(eiv, tv);
                         break;
                 }
             }
@@ -192,8 +202,10 @@ public class mainActivity extends Activity {
                 methodID = method1;
                 break;
             case R.id.opt2:
-            case R.id.opt3:
                 methodID = method2;
+                break;
+            case R.id.opt3:
+                methodID = method3;
                 break;
         }
 //        Toast.makeText(getApplicationContext(), ""+methodID, Toast.LENGTH_SHORT).show();
@@ -371,9 +383,12 @@ public class mainActivity extends Activity {
                         mBitmapARGB.setRGB(mDataHiding.getARGBvalues(), BitmapARGB.save);
                         break;
                     case method2:
-                    case method3:
-                        mDataHiding2.setData(s, mBitmapARGB.getARGBvalues(), bmp.getWidth(), bmp.getHeight(), tv);
+                        mDataHiding2.setData(s, mBitmapARGB.getARGBvalues(), bmp.getWidth(), bmp.getHeight(), mSeed, tv);
                         mBitmapARGB.setRGB(mDataHiding2.getARGBvalues(), BitmapARGB.save);
+                        break;
+                    case method3:
+                        mDataHiding3.setData(s, mBitmapARGB.getARGBvalues(), bmp.getWidth(), bmp.getHeight(), tv);
+                        mBitmapARGB.setRGB(mDataHiding3.getARGBvalues(), BitmapARGB.save);
                         break;
                 }
                 break;
@@ -393,8 +408,10 @@ public class mainActivity extends Activity {
                         mDataDecoding.decodeData(dTV);
                         break;
                     case method2:
-                    case method3:
                         mDataDecoding2.decodeData(dTV);
+                        break;
+                    case method3:
+                        mDataDecoding3.decodeData(dTV);
                         break;
                 }
                 break;

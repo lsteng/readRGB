@@ -12,12 +12,12 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * Created by 03070048 on 2016/9/10.
+ * Created by 03070048 on 2017/8/22.
  */
 public class DataHiding2 {
     private String TAG = "DataHiding2";
     private Context mContext;
-
+    private int mSeed;
     private TextView TV;
 
     public static synchronized DataHiding2 getInstance(Context context){
@@ -26,14 +26,16 @@ public class DataHiding2 {
 
     public DataHiding2(Context context){
         mContext = context;
+
     }
 
     private int[][] rgbValues;
     private int rows, columns; //[列(row)]寬, [行(column)]高
-    public void setData(String key, int[][] rgbValues, int rows, int columns, TextView tv){
+    public void setData(String key, int[][] rgbValues, int rows, int columns, int seed, TextView tv){
         this.rgbValues = rgbValues;
         this.rows = rows;
         this.columns = columns;
+        this.mSeed = seed;
         this.TV = tv;
 
         int totalCount = key.length();
@@ -41,8 +43,12 @@ public class DataHiding2 {
         Log.d(TAG, "rows:"+rows +"_columns:"+ columns);
         tv.append("rows:"+rows +"_columns:"+ columns +"\n");
 
-        //依照字數長度，隨機產生不重複座標
-        randomPos(rows, columns, key.length());
+        //使用亂數種子，先得到起始點座標
+        Random random = new Random();
+        random.setSeed(mSeed);
+        randomStartPos(rows, columns, random);
+        //依照字數長度，以亂數種子隨機產生不重複座標
+        randomPos(rows, columns, key.length(), random);
 
         //埋放字數長度
         String keyLength;
@@ -74,92 +80,60 @@ public class DataHiding2 {
     }
 
     private void hideData(String keys, int pos){
-        setPos2x2(pos);
-        getARGBcolor(keys, pos);
-    }
-
-    private int[] posX = new int[4];
-    private int[] posY = new int[4];
-    private void setPos2x2(int pos){
         String position = coordinateList.get(pos);
-        int index = position.indexOf(",");
+        int index = position.indexOf(coordinateIndex);
         int length = position.length();
-        posX[0] = Integer.valueOf(position.substring(0, index));
-        posY[0] = Integer.valueOf(position.substring(index+1, length));
-        posX[1] = posX[0] + 1;
-        posY[1] = posY[0];
-        posX[2] = posX[0];
-        posY[2] = posY[0] + 1;
-        posX[3] = posX[0] + 1;
-        posY[3] = posY[0] + 1;
+        int Px = Integer.valueOf(position.substring(0, index));
+        int Py = Integer.valueOf(position.substring(index+1, length));
+
+        getARGBcolor(keys, Px, Py, Px+1, Py);
     }
 
     private final int type_alpha = 0;
     private final int type_red   = 1;
     private final int type_green = 2;
     private final int type_blue  = 3;
-    private int[] colorA = new int[4];
-    private int[] colorR = new int[4];
-    private int[] colorG = new int[4];
-    private int[] colorB = new int[4];
-    private void getARGBcolor(String charKey, int pos){
+    private int a1, r1, g1, b1;
+    private int a2, r2, g2, b2;
+    private void getARGBcolor(String charKey, int posX1, int posY1, int posX2, int posY2){
+        TV.append("pos:"+ posX1+"_"+posY1 +":"+ posX2+"_"+posY2 +"\n");
 
-        for(int i=0; i<4; i++){
-            int color = rgbValues[posX[i]][posY[i]];
-            colorA[i] = (int)Color.alpha(color);
-            colorR[i] = (int)Color.red(color);
-            colorG[i] = (int)Color.green(color);
-            colorB[i] = (int)Color.blue(color);
+        int color1 = rgbValues[posX1][posY1];
+        int color2 = rgbValues[posX2][posY2];
 
-            TV.append("pos:"+ posX[i]+"_"+posY[i] +"\n");
-            TV.append("rgb:"+ colorR[i] +"_"+ colorG[i] +"_"+ colorB[i]  +"\n");
-        }
+        a1 = (int)Color.alpha(color1);
+        r1 = (int)Color.red(color1);
+        g1 = (int)Color.green(color1);
+        b1 = (int)Color.blue(color1);
 
+        a2 = (int)Color.alpha(color2);
+        r2 = (int)Color.red(color2);
+        g2 = (int)Color.green(color2);
+        b2 = (int)Color.blue(color2);
+
+        TV.append(a1 +"_"+ r1 +"_"+ g1 +"_"+ b1 +" "+
+                a2 +"_"+ r2 +"_"+ g2 +"_"+ b2 +"\n");
         TV.append(charKey +"\n");
 
         //Bitmap取alpha值，會都為255不透明，故不埋值
-        int numberKey = 1;
-        int numberX   = 2;
-        int numberY   = 3;
-        //埋放內容
-        resetColor(type_red, colorR[0], colorR[1], charKey.substring(0,3), numberKey);
-        resetColor(type_green, colorG[0], colorG[1], charKey.substring(3,5), numberKey);
-        resetColor(type_blue, colorB[0], colorB[1], charKey.substring(5,7), numberKey);
-
-        //埋放下一點位置
-        if(pos < algorithmList.size()){
-            int index  = algorithmList.get(pos).indexOf(coordinateIndex);
-            int length = algorithmList.get(pos).length();
-            String Xs  = algorithmList.get(pos).substring(0, index);
-            String Ys  = algorithmList.get(pos).substring(index+1, length);
-            TV.append(coordinateList.get(pos+1) +"\n");
-
-            TV.append(Xs +"\n");
-            resetColor(type_red, colorR[0], colorR[2], Xs.substring(0, 4), numberX);
-            resetColor(type_green, colorG[0], colorG[2], Xs.substring(4, 8), numberX);
-            resetColor(type_blue, colorB[0], colorB[2], Xs.substring(8, 12), numberX);
-
-            TV.append(Ys +"\n");
-            resetColor(type_red, colorR[0], colorR[3], Ys.substring(0, 4), numberY);
-            resetColor(type_green, colorG[0], colorG[3], Ys.substring(4, 8), numberY);
-            resetColor(type_blue, colorB[0], colorB[3], Ys.substring(8, 12), numberY);
-        }
+//        resetColor(type_alpha, a1, a2, charKey.substring(-1,-1));
+        resetColor(type_red, r1, r2, charKey.substring(0,3));
+        resetColor(type_green, g1, g2, charKey.substring(3,5));
+        resetColor(type_blue, b1, b2, charKey.substring(5,7));
 
         TV.append("----------------------------- \n");
 
-        for(int j=0; j<4; j++){
-            rgbValues[posX[j]][posY[j]] = Color.rgb(colorR[j], colorG[j], colorB[j]);
-
-            TV.append("Cpos:"+ posX[j]+"_"+posY[j] +"\n");
-            TV.append("Crgb:"+ colorR[j] +"_"+ colorG[j] +"_"+ colorB[j]  +"\n");
-        }
+//        rgbValues[posX1][posY1] = Color.argb(a1, r1, g1, b1);
+//        rgbValues[posX2][posY2] = Color.argb(a2, r2, g2, b2);
+        rgbValues[posX1][posY1] = Color.rgb(r1, g1, b1);
+        rgbValues[posX2][posY2] = Color.rgb(r2, g2, b2);
     }
 
     public int[][] getARGBvalues(){
-      return rgbValues;
+        return rgbValues;
     };
 
-    private void resetColor(int typeColor, int currentP, int nextP, String binaryKey, int number){
+    private void resetColor(int typeColor, int currentP, int nextP, String binaryKey){
         int to10Key = Integer.valueOf(binaryKey, 2);
         int diff = currentP - nextP;
 
@@ -168,24 +142,16 @@ public class DataHiding2 {
             if(diff > 0){ //正，currentP > nextP
                 if(compare > 0){ //需加大，原差距較小
                     if(nextP - Math.abs(compare) < 0){ //若nextP減少小於0，則currentP加入剩值
-                        if(number < 2){
-                            currentP = currentP + Math.abs(nextP - Math.abs(compare));
-                            nextP = 0;
-                        }else{
-                            nextP = currentP + Math.abs(compare); //將下一點改比原點大，防止座標溢位
-                        }
+                        currentP = currentP + Math.abs(nextP - Math.abs(compare));
+                        nextP = 0;
                     }else{
                         nextP = nextP - Math.abs(compare);
                     }
                 }
                 if(compare < 0){ //需縮小，原差距較大
                     if(nextP + Math.abs(compare) > 255){ //若next增加超過255，則currentP扣除剩值
-                        if(number < 2) {
-                            currentP = currentP - ((nextP + Math.abs(compare)) - 255);
-                            nextP = 255;
-                        }else{
-                            nextP = currentP - Math.abs(compare); //將下一點改比原點小，防止座標溢位
-                        }
+                        currentP = currentP - ((nextP+Math.abs(compare))-255);
+                        nextP = 255;
                     }else{
                         nextP = nextP + Math.abs(compare);
                     }
@@ -195,24 +161,16 @@ public class DataHiding2 {
             if(diff < 0){ //負，currentP < nextP (算法與前者相反)
                 if(compare > 0){ //需加大，原差距較小
                     if(nextP + Math.abs(compare) > 255){ //若next增加超過255，則currentP扣除剩值
-                        if(number < 2) {
-                            currentP = currentP - ((nextP + Math.abs(compare)) - 255);
-                            nextP = 255;
-                        }else{
-                            nextP = currentP - Math.abs(compare); //將下一點改比原點小，防止座標溢位
-                        }
+                        currentP = currentP - ((nextP + Math.abs(compare))-255);
+                        nextP = 255;
                     }else{
                         nextP = nextP + Math.abs(compare);
                     }
                 }
                 if(compare < 0){ //需縮小，原差距較大
                     if(nextP - Math.abs(compare) < 0){ //若nextP減少小於0，則currentP加入剩值
-                        if(number < 2) {
-                            currentP = currentP + Math.abs(nextP - Math.abs(compare));
-                            nextP = 0;
-                        }else{
-                            nextP = currentP + Math.abs(compare); //將下一點改比原點大，防止座標溢位
-                        }
+                        currentP = currentP + Math.abs(nextP - Math.abs(compare));
+                        nextP = 0;
                     }else{
                         nextP = nextP - Math.abs(compare);
                     }
@@ -221,12 +179,8 @@ public class DataHiding2 {
 
             if(diff == 0) { //currentP = nextP
                 if (nextP + Math.abs(compare) > 255) { //若next增加超過255，則currentP扣除剩值
-                    if(number < 2) {
-                        currentP = currentP - ((nextP + Math.abs(compare)) - 255);
-                        nextP = 255;
-                    }else{
-                        nextP = currentP - Math.abs(compare); //將下一點改比原點小，防止座標溢位
-                    }
+                    currentP = currentP - ((nextP + Math.abs(compare))-255);
+                    nextP = 255;
                 } else {
                     nextP = nextP + Math.abs(compare);
                 }
@@ -237,50 +191,66 @@ public class DataHiding2 {
 
         switch(typeColor){
             case type_alpha:
-                colorA[0] = currentP;
-                colorA[number] = nextP;
+                a1 = currentP;
+                a2 = nextP;
                 break;
             case type_red:
-                colorR[0] = currentP;
-                colorR[number] = nextP;
+                r1 = currentP;
+                r2 = nextP;
                 break;
             case type_green:
-                colorG[0] = currentP;
-                colorG[number] = nextP;
+                g1 = currentP;
+                g2 = nextP;
                 break;
             case type_blue:
-                colorB[0] = currentP;
-                colorB[number] = nextP;
+                b1 = currentP;
+                b2 = nextP;
                 break;
         }
     }
 
-
-    //二維陣列中存放不重複的x,y座標 (2x2)
-    private List<String> coordinateList = new ArrayList<String>();
+    //二維陣列中存放不重複的x,y座標 (2x1)
+    private List<String> coordinateList;
     private String coordinateIndex = ",";
-    public void randomPos(int rangeX, int rangeY, int keyLength) {
-        HashSet<String> hset = new HashSet<String>();
-        Random random = new Random();
+    HashSet<String> hset;
+    public void randomStartPos(int rangeX, int rangeY, Random random) {
+        coordinateList = new ArrayList<String>();
+        hset = new HashSet<String>();
 
         //長寬最大值奇偶數處理
         rangeX = (rangeX%2==0) ? rangeX-1:rangeX-2;
-        rangeY = (rangeY%2==0) ? rangeY-1:rangeY-2;
+//        rangeY = (rangeY%2==0) ? rangeY-1:rangeY-2;
 
         int x,y ;
         String coordinate ;
-        String startP = (rangeX-1)+","+(rangeY-1);
-        hset.add(startP);
-        while(hset.size()<(keyLength+1)){
-            x=random.nextInt(rangeX)/2*2; //(2x2)為一區塊
-            y=random.nextInt(rangeY)/2*2; //(2x2)為一區塊
+
+        x = random.nextInt(rangeX)/2*2; //(2x1)為一區塊
+        y = random.nextInt(rangeY);
+        coordinate = x + coordinateIndex + y;
+        hset.add(coordinate);
+        coordinateList.add(coordinate);
+
+//        int startPoint = 0;
+//        TV.append((startPoint)+". "+coordinateList.get(startPoint) +"\n");
+    }
+
+    public void randomPos(int rangeX, int rangeY, int keyLength, Random random) {
+        //長寬最大值奇偶數處理
+        rangeX = (rangeX%2==0) ? rangeX-1:rangeX-2;
+//        rangeY = (rangeY%2==0) ? rangeY-1:rangeY-2;
+
+        int x,y ;
+        String coordinate ;
+
+        while(hset.size()<=(keyLength+1)){
+            x=random.nextInt(rangeX)/2*2; //(2x1)為一區塊
+            y=random.nextInt(rangeY);
             coordinate=x+ coordinateIndex +y;
             hset.add(coordinate);
         }
 
-        //刪除埋放長度與下一點的起始點
-        coordinateList.add(startP);
-        hset.remove(startP);
+        //刪除埋放的起始點
+        hset.remove(coordinateList.get(0));
 
         /* hset呼叫iterator()方法，回傳Iterator型態的物件，
          * 該物件包含所有setTest內所存放的值，將該物件存入iterator
@@ -297,74 +267,11 @@ public class DataHiding2 {
              */
             String nextP = iterator.next();
             coordinateList.add(nextP);
-            algorithm(nextP);
         }
 
 //        Collections.sort(coordinateList); //依照文字進行排序
 //        for(int i=0; i<coordinateList.size(); i++){
 //            TV.append((i)+". "+coordinateList.get(i) +"\n");
-//            if(i>0){
-//                TV.append(algorithmList.get(i-1) +"\n");
-//            }
 //        }
-    }
-
-    private List<String> algorithmList = new ArrayList<String>();
-    private void algorithm(String position){
-        int index = position.indexOf(coordinateIndex);
-        int length = position.length();
-        int Px = Integer.valueOf(position.substring(0, index));
-        int Py = Integer.valueOf(position.substring(index+1, length));
-        int digit = 1000;
-        String Bx = Fillin0(Integer.toBinaryString((Px/digit)/2), 3) + Fillin0(Integer.toBinaryString((Px%digit)/2), 9);
-        String By = Fillin0(Integer.toBinaryString((Py/digit)/2), 3) + Fillin0(Integer.toBinaryString((Py%digit)/2), 9);
-        position = Bx+","+By;
-        algorithmList.add(position);
-    }
-
-
-    /* 不重複亂數 (Collection移出法)
-     * 此方法較快，尤其在產生大量亂數的時候更為明顯。分成三個部分來解釋.
-     * 1. 產生一個ArrayList，並且利用for loop塞值進去，你想要產生0~99的亂數，就丟100進去，他就會依序把0~99塞到ArrayList裡面.
-     * 2. 用Collection的remove method，隨機的取index，並且移出，直到 ArrayList 的size = 0。
-     * 因為本來在ArrayList裡面的數字就沒有重複(用for loop塞的)，所以隨機取出的值也不會重複!
-     * 3. 最後一個部份就是去呼叫上面的方法並且宣告一個array來接收上面產生的亂數
-     */
-    public static int[] GenerateNonDuplicateRan2(int range, int getSize)
-    {
-        Random mRandom = new Random();
-        int randoms[] = new int[getSize];
-        List<Integer> holeList = new ArrayList<Integer>();
-        for(int i=0; i<range; i++){
-            //holeList.add(new Integer(i));
-            holeList.add(i);
-        }
-        int count=0;
-        while (holeList.size()>0 && count<getSize) {
-            int pv = holeList.remove(mRandom.nextInt(holeList.size()));
-            randoms[count++] = pv;
-        }
-        return randoms;
-    }
-
-    /* 用Hash資料結構做不重複亂數 (HashSet的暴力比較法)
-     * HashSet是實作Set介面的物件，Set容器中的物件都是唯一的
-     * 所以再次新增重複物件時，會判定已有這個物件，而不會加入
-     * 至於順序不一樣是因為HashSet的順序是利用Hash Table排序過的，所以會與當初輸入時不一樣
-     * 如果要讓set順序與輸入時相同，可以使用LinkedHashSet，他的走訪就會跟LinkedList一樣
-     */
-    public static int[] GenerateNonDuplicateRan1(int range, int getSize)
-    {
-        int rnd;
-        int[] result = new int[range];
-        HashSet<Integer> rndSet = new HashSet<Integer>(range);
-        for(int i=0; i<range; i++){
-            rnd = (int)(range * Math.random());
-            while (!rndSet.add(rnd)){
-                rnd = (int)(range * Math.random());
-            }
-            result[i] = rnd;
-        }
-        return result;
     }
 }

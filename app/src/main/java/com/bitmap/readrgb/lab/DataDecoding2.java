@@ -10,8 +10,14 @@ import android.widget.TextView;
 
 import com.bitmap.readrgb.mainActivity;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
+
 /**
- * Created by 03070048 on 2016/9/12.
+ * Created by 03070048 on 2017/8/24.
  */
 public class DataDecoding2 {
     private String TAG = "DataDecoding2";
@@ -22,6 +28,7 @@ public class DataDecoding2 {
 //    private int[][] rgbValues;
     private int rows, columns; //[列(row)]寬, [行(column)]高
     private int keyCount;
+    private int mSeed;
     private TextView TV, dTV;
 
     public static synchronized DataDecoding2 getInstance(Context context){
@@ -32,7 +39,8 @@ public class DataDecoding2 {
         mContext = context;
     }
 
-    public void setData(ImageView iv, TextView tv){
+    public void setData(ImageView iv, int seed, TextView tv){
+        this.mSeed = seed;
         this.TV = tv;
 
 //        BitmapDrawable mDrawable =  (BitmapDrawable) iv.getDrawable();
@@ -60,136 +68,98 @@ public class DataDecoding2 {
         this.dTV = dtv;
         TV.append("rows:"+rows +"_columns:"+ columns +"\n");
 
-        //長寬最大值奇偶數處理
-        int startX = (rows%2==0) ? rows-2:rows-3;
-        int startY = (columns%2==0) ? columns-2:columns-3;
+        //使用亂數種子，先得到起始點座標
+        Random random = new Random();
+        random.setSeed(mSeed);
+        randomStartPos(rows, columns, random);
 
-        loadData(keySize, startX, startY, 0); //取字數長度
+        loadData(keySizeFlag); //取字數長度
         TV.append("key length:"+keyCount +"\n");
+
+        //依照字數長度，以亂數種子隨機產生不重複座標
+        randomPos(rows, columns, keyCount, random);
 
         try{
             for(int i=0; i<keyCount; i++){
-                loadData(keyContent, 0, 0, i);  //取字內容
+                loadData(i);  //取字內容
             }
         }catch (Exception e){
             TV.append("error:"+e.toString() +"\n");
         }
 
-
         ((mainActivity)mContext).ProcessTime(mainActivity.endCount);
     }
 
-    private int[] posX = new int[4];
-    private int[] posY = new int[4];
-    private void getPos2x2(int Px, int Py){
-        posX[0] = Px;
-        posY[0] = Py;
-        posX[1] = posX[0] + 1;
-        posY[1] = posY[0];
-        posX[2] = posX[0];
-        posY[2] = posY[0] + 1;
-        posX[3] = posX[0] + 1;
-        posY[3] = posY[0] + 1;
-    }
+    private final int keySizeFlag    = 0;
+    private final int keyContentFlag = 1;
+    private void loadData(int pos){
+        String position = coordinateList.get(pos);
+        int index = position.indexOf(coordinateIndex);
+        int length = position.length();
+        int Px = Integer.valueOf(position.substring(0, index));
+        int Py = Integer.valueOf(position.substring(index+1, length));
 
-//    private List<Integer> coordinateX = new ArrayList<Integer>();
-//    private List<Integer> coordinateY = new ArrayList<Integer>();
-    private void algorithm(String X, String Y){
-        TV.append("pos:"+ X+"_"+Y +"\n");
-        int Xt = (Integer.valueOf(X.substring(0, 3), 2))*2;
-        int Yt = (Integer.valueOf(Y.substring(0, 3), 2))*2;
-        int Xo = (Integer.valueOf(X.substring(3, 12), 2))*2;
-        int Yo = (Integer.valueOf(Y.substring(3, 12), 2))*2;
-        int digit = 1000;
-        int Px = (Xt*digit)+Xo;
-        int Py = (Yt*digit)+Yo;
-
-//        coordinateX.add(Px);
-//        coordinateY.add(Py);
-        getPos2x2(Px, Py);
-        TV.append("pos:"+ Px+"_"+Py +"\n");
-    }
-
-    private final static int keySize    = 0;
-    private final static int keyContent = 1;
-    private void loadData(int type, int px, int py, int pos){
-        switch(type){
-            case keySize:
-                getPos2x2(px, py);
-                keyCount = getKeyLength();
-                break;
-            case keyContent:
-                getRGBcolor();
-                break;
+        if(pos == keySizeFlag){
+            keyCount = getKeyLength(Px, Py, Px+1, Py);
+        }else{
+            getARGBcolor(Px, Py, Px+1, Py);
         }
-
     }
 
-    private int[] colorA = new int[4];
-    private int[] colorR = new int[4];
-    private int[] colorG = new int[4];
-    private int[] colorB = new int[4];
-    private int getKeyLength(){
-        for(int i=0; i<4; i++){
-            int color = bmp.getPixel(posX[i], posY[i]);
-//            colorA[i] = (int)Color.alpha(color);
-            colorR[i] = (int)Color.red(color);
-            colorG[i] = (int)Color.green(color);
-            colorB[i] = (int)Color.blue(color);
+    private int getKeyLength(int posX1, int posY1, int posX2, int posY2){
+        TV.append("keySize pos:"+ posX1+"_"+posY1 +":"+ posX2+"_"+posY2 +"\n");
 
-            TV.append("pos:"+ posX[i]+"_"+posY[i] +"\n");
-            TV.append("rgb:"+ colorR[i] +"_"+ colorG[i] +"_"+ colorB[i]  +"\n");
-        }
+        int color1 = bmp.getPixel(posX1, posY1);
+        int color2 = bmp.getPixel(posX2, posY2);
 
-        String r = FillIn0(Integer.toBinaryString(Math.abs(colorR[0]-colorR[1])), 3);
-        String g = FillIn0(Integer.toBinaryString(Math.abs(colorG[0]-colorG[1])), 2);
-        String b = FillIn0(Integer.toBinaryString(Math.abs(colorB[0]-colorB[1])), 2);
+        int r1 = (int)Color.red(color1);
+        int g1 = (int)Color.green(color1);
+        int b1 = (int)Color.blue(color1);
+
+        int r2 = (int)Color.red(color2);
+        int g2 = (int)Color.green(color2);
+        int b2 = (int)Color.blue(color2);
+
+        TV.append(r1 +"_"+ g1 +"_"+ b1 +" "+
+                r2 +"_"+ g2 +"_"+ b2 +"\n");
+
+        String r = Math.abs(r1-r2)==0 ? "000":FillIn0(Integer.toBinaryString(Math.abs(r1-r2)));
+        String g = Math.abs(g1-g2)==0 ? "00":FillIn0(Integer.toBinaryString(Math.abs(g1-g2)));
+        String b = Math.abs(b1-b2)==0 ? "00":FillIn0(Integer.toBinaryString(Math.abs(b1-b2)));
+
         String binaryKey = r + g + b;
         TV.append("-> "+ binaryKey +"\n");
-
-        String Xr = FillIn0(Integer.toBinaryString(Math.abs(colorR[0]-colorR[2])), 4);
-        String Xg = FillIn0(Integer.toBinaryString(Math.abs(colorG[0]-colorG[2])), 4);
-        String Xb = FillIn0(Integer.toBinaryString(Math.abs(colorB[0]-colorB[2])), 4);
-        String X  = Xr + Xg + Xb;
-        String Yr = FillIn0(Integer.toBinaryString(Math.abs(colorR[0]-colorR[3])), 4);
-        String Yg = FillIn0(Integer.toBinaryString(Math.abs(colorG[0]-colorG[3])), 4);
-        String Yb = FillIn0(Integer.toBinaryString(Math.abs(colorB[0]-colorB[3])), 4);
-        String Y  = Yr + Yg + Yb;
-        algorithm(X, Y);
-
         return Integer.valueOf(binaryKey, 2);
     }
 
-    private void getRGBcolor(){
-        for(int i=0; i<4; i++){
-            int color = bmp.getPixel(posX[i], posY[i]);
-//            colorA[i] = (int)Color.alpha(color);
-            colorR[i] = (int)Color.red(color);
-            colorG[i] = (int)Color.green(color);
-            colorB[i] = (int)Color.blue(color);
+    private void getARGBcolor(int posX1, int posY1, int posX2, int posY2){
+        Log.d(TAG, posX1+"_"+posY1+":"+posX2+"_"+posY2);
 
-            TV.append("pos:"+ posX[i]+"_"+posY[i] +"\n");
-            TV.append("rgb:"+ colorR[i] +"_"+ colorG[i] +"_"+ colorB[i]  +"\n");
-        }
+//        int color1 = rgbValues[posX1][posY1];
+//        int color2 = rgbValues[posX2][posY2];
+        int color1 = bmp.getPixel(posX1, posY1);
+        int color2 = bmp.getPixel(posX2, posY2);
 
-        String r = FillIn0(Integer.toBinaryString(Math.abs(colorR[0]-colorR[1])), 3);
-        String g = FillIn0(Integer.toBinaryString(Math.abs(colorG[0]-colorG[1])), 2);
-        String b = FillIn0(Integer.toBinaryString(Math.abs(colorB[0]-colorB[1])), 2);
+        int a1 = (int) Color.alpha(color1);
+        int r1 = (int)Color.red(color1);
+        int g1 = (int)Color.green(color1);
+        int b1 = (int)Color.blue(color1);
+
+        int a2 = (int)Color.alpha(color2);
+        int r2 = (int)Color.red(color2);
+        int g2 = (int)Color.green(color2);
+        int b2 = (int)Color.blue(color2);
+
+        TV.append(a1 +"_"+ r1 +"_"+ g1 +"_"+ b1 +" "+
+                a2 +"_"+ r2 +"_"+ g2 +"_"+ b2 +"\n");
+
+        //Bitmap取alpha值，會都為255不透明，故不埋值
+//        String a = Math.abs(a1-a2)==0 ? "00":FillIn0(Integer.toBinaryString(Math.abs(a1-a2)));
+        String r = Math.abs(r1-r2)==0 ? "000":FillIn0(Integer.toBinaryString(Math.abs(r1-r2)));
+        String g = Math.abs(g1-g2)==0 ? "00":FillIn0(Integer.toBinaryString(Math.abs(g1-g2)));
+        String b = Math.abs(b1-b2)==0 ? "00":FillIn0(Integer.toBinaryString(Math.abs(b1-b2)));
+
         String binaryKey = r + g + b;
-        TV.append("-> "+ binaryKey +"\n");
-
-
-        String Xr = FillIn0(Integer.toBinaryString(Math.abs(colorR[0]-colorR[2])), 4);
-        String Xg = FillIn0(Integer.toBinaryString(Math.abs(colorG[0]-colorG[2])), 4);
-        String Xb = FillIn0(Integer.toBinaryString(Math.abs(colorB[0]-colorB[2])), 4);
-        String X  = Xr + Xg + Xb;
-        String Yr = FillIn0(Integer.toBinaryString(Math.abs(colorR[0]-colorR[3])), 4);
-        String Yg = FillIn0(Integer.toBinaryString(Math.abs(colorG[0]-colorG[3])), 4);
-        String Yb = FillIn0(Integer.toBinaryString(Math.abs(colorB[0]-colorB[3])), 4);
-        String Y  = Yr + Yg + Yb;
-        algorithm(X, Y);
-
-
         int ascii = Integer.valueOf(binaryKey, 2);
         String key = Character.toString((char)ascii);
 
@@ -199,12 +169,81 @@ public class DataDecoding2 {
 //        Log.d(TAG, "----------------------------- \n");
     }
 
-    //預設二進位長度，長度小於則補0
-    private String FillIn0(String s, int length){
+    //預設二進位長度2位，長度小於2則補0
+    private String FillIn0(String s){
+        int totalLength = 2;
+
         StringBuffer outBinaryStrBuf = new StringBuffer();
-        for(int j=0; j<(length - s.length()); j++){
+        for(int j=0; j<(totalLength -s.length()); j++){
             outBinaryStrBuf.append("0");
         }
+
         return outBinaryStrBuf + s;
+    }
+
+    //二維陣列中存放不重複的x,y座標 (2x1)
+    private List<String> coordinateList;
+    private String coordinateIndex = ",";
+    HashSet<String> hset;
+    public void randomStartPos(int rangeX, int rangeY, Random random) {
+        coordinateList = new ArrayList<String>();
+        hset = new HashSet<String>();
+
+        //長寬最大值奇偶數處理
+        rangeX = (rangeX%2==0) ? rangeX-1:rangeX-2;
+//        rangeY = (rangeY%2==0) ? rangeY-1:rangeY-2;
+
+        int x,y ;
+        String coordinate ;
+
+        x = random.nextInt(rangeX)/2*2; //(2x1)為一區塊
+        y = random.nextInt(rangeY);
+        coordinate = x + coordinateIndex + y;
+        hset.add(coordinate);
+        coordinateList.add(coordinate);
+
+//        int startPoint = 0;
+//        TV.append((startPoint)+". "+coordinateList.get(startPoint) +"\n");
+    }
+
+    public void randomPos(int rangeX, int rangeY, int keyLength, Random random) {
+        //長寬最大值奇偶數處理
+        rangeX = (rangeX%2==0) ? rangeX-1:rangeX-2;
+//        rangeY = (rangeY%2==0) ? rangeY-1:rangeY-2;
+
+        int x,y ;
+        String coordinate ;
+
+        while(hset.size()<=(keyLength)){
+            x=random.nextInt(rangeX)/2*2; //(2x1)為一區塊
+            y=random.nextInt(rangeY);
+            coordinate=x+ coordinateIndex +y;
+            hset.add(coordinate);
+        }
+
+        //刪除埋放的起始點
+        hset.remove(coordinateList.get(0));
+
+        /* hset呼叫iterator()方法，回傳Iterator型態的物件，
+         * 該物件包含所有setTest內所存放的值，將該物件存入iterator
+         */
+        Iterator<String> iterator = hset.iterator() ;
+        /* hasNext()為使用游標走訪Iterator物件，檢查下一筆元素是包含物件，
+         * 有包含物件則傳回true，否則false。
+         * 游標的起始位置在Iterator第一筆元素之前，所以第一次執行hasNext()，
+         * 會檢查Iterator的第一筆元素，使用此方式可以走訪Iterator內的所有物件
+         */
+        while(iterator.hasNext()){
+            /* next()為使用游標走訪Iterator，取出下一筆的值。
+             * 游標的起始位置在Iterator第一筆之前，所以第一次執行next()，會取出Iterator的第一筆資料
+             */
+            String nextP = iterator.next();
+            coordinateList.add(nextP);
+        }
+
+//        Collections.sort(coordinateList); //依照文字進行排序
+//        for(int i=0; i<coordinateList.size(); i++){
+//            TV.append((i)+". "+coordinateList.get(i) +"\n");
+//        }
     }
 }

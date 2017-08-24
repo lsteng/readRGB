@@ -58,7 +58,6 @@ public class DataDecoding {
 
     public void decodeData(TextView dtv){
         this.dTV = dtv;
-
         TV.append("rows:"+rows +"_columns:"+ columns +"\n");
 
 //        keyCount = (keyCount<0) ? 16:keyCount;
