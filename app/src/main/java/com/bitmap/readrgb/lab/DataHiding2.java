@@ -242,7 +242,7 @@ public class DataHiding2 {
         int x,y ;
         String coordinate ;
 
-        while(hset.size()<=(keyLength+1)){
+        while(hset.size()<=(keyLength)){
             x=random.nextInt(rangeX)/2*2; //(2x1)為一區塊
             y=random.nextInt(rangeY);
             coordinate=x+ coordinateIndex +y;

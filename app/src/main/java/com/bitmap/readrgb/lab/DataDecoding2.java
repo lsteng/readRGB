@@ -75,12 +75,13 @@ public class DataDecoding2 {
 
         loadData(keySizeFlag); //取字數長度
         TV.append("key length:"+keyCount +"\n");
+        TV.append("----------------------------- \n");
 
         //依照字數長度，以亂數種子隨機產生不重複座標
         randomPos(rows, columns, keyCount, random);
 
         try{
-            for(int i=0; i<keyCount; i++){
+            for(int i=keyContentFlag; i<keyCount+1; i++){
                 loadData(i);  //取字內容
             }
         }catch (Exception e){
@@ -133,7 +134,8 @@ public class DataDecoding2 {
     }
 
     private void getARGBcolor(int posX1, int posY1, int posX2, int posY2){
-        Log.d(TAG, posX1+"_"+posY1+":"+posX2+"_"+posY2);
+//        Log.d(TAG, posX1+"_"+posY1+":"+posX2+"_"+posY2);
+        TV.append("keyContent pos:"+ posX1+"_"+posY1+":"+posX2+"_"+posY2 +"\n");
 
 //        int color1 = rgbValues[posX1][posY1];
 //        int color2 = rgbValues[posX2][posY2];
@@ -166,7 +168,8 @@ public class DataDecoding2 {
         TV.append("-> "+ binaryKey +" : "+ ascii +"\n");
         dTV.append(key);
 
-//        Log.d(TAG, "----------------------------- \n");
+        TV.append("----------------------------- \n");
+//        Log.d(TAG, "-----------------------------");
     }
 
     //預設二進位長度2位，長度小於2則補0
