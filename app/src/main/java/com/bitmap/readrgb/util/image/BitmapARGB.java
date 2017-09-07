@@ -27,7 +27,8 @@ public class BitmapARGB {
     public final static int hide   = 2;
     public final static int decode = 3;
     public final static int save   = 4;
-    public final static int saveLP = 5;
+    public final static int hideLP = 5;
+    public final static int saveLP = 6;
     public String ResultMsg = "";  //宣告一變數承接Thread要向外傳的值。
 
     public static synchronized BitmapARGB getInstance(Context context){
@@ -95,6 +96,9 @@ public class BitmapARGB {
                 case decode:
                     ((mainActivity)mContext).ProcessTime(mainActivity.decodeStart);
                     break;
+                case hideLP:
+                    ((mainActivity)mContext).ProcessTime(mainActivity.hideLP);
+                    break;
             }
         }
     };
@@ -159,6 +163,9 @@ public class BitmapARGB {
                     break;
                 case save:
                     ((mainActivity)mContext).ProcessTime(mainActivity.endSaveCount);
+                    break;
+                case saveLP:
+                    ((mainActivity)mContext).ProcessTime(mainActivity.endSaveLP);
                     break;
             }
         }

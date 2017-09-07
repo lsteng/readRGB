@@ -2,6 +2,7 @@ package com.bitmap.readrgb.lab;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.Log;
@@ -39,15 +40,21 @@ public class LaunchPageInfo {
 
     public final static int hideDataType   = 0;
     public final static int decodeDataType = 1;
-    public void setData(ImageView iv, TextView tv, int actionType){
+    public void setData(ImageView iv, TextView tv, int actionType, int[][] rgbValues){
         this.TV = tv;
+        this.rgbValues = rgbValues;
 
-        BitmapDrawable mDrawable =  (BitmapDrawable) iv.getDrawable();
-        bmp = mDrawable.getBitmap();
-
-//        String pathName = mContext.getExternalCacheDir().getAbsolutePath()+"/pic/datahiding.png";
-//        TV.append("pathName:"+pathName +"\n");
-//        bmp = BitmapFactory.decodeFile(pathName);
+        switch(actionType){
+            case hideDataType:
+                BitmapDrawable mDrawable =  (BitmapDrawable) iv.getDrawable();
+                bmp = mDrawable.getBitmap();
+                break;
+            case decodeDataType:
+                String pathName = mContext.getExternalCacheDir().getAbsolutePath() + "/pic/hidLP.png";
+                TV.append("pathName:" + pathName + "\n");
+                bmp = BitmapFactory.decodeFile(pathName);
+                break;
+        }
 
         rows = bmp.getWidth();
         columns = bmp.getHeight();

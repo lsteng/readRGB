@@ -110,7 +110,7 @@ public class BitmapUtils {
 
     //儲存圖片至檔案
 //    public static void saveBitmapToFile(Context context, Bitmap bmp, TextView tv) {
-    public static void saveBitmapToFile(Context context, Bitmap bmp) {
+    public static void saveBitmapToFile(Context context, Bitmap bmp, String fileName) {
         FileOutputStream out = null;
         try {
 //            File path = new File (getSDCardPath()[0] + "/Download/DataHiding");
@@ -129,7 +129,7 @@ public class BitmapUtils {
             if (!dir.exists()) {
                 dir.mkdirs();
             }
-            String fileName = "datahiding.png";
+//            String fileName = "datahiding.png";
             out = new FileOutputStream(path + fileName);
 
             //PNG is a lossless format, the compression factor (100) is ignored

@@ -65,6 +65,7 @@ public class mainActivity extends Activity {
     private Button dbtn;    //開始取密按鈕
     private Button pbtn;    //計算psnr按鈕
     private ProgressBar pb; //藏密圖片，處理進度條
+    private ProgressBar pbl;//藏密launchPhoto，處理進度條
     private EditText et;    //藏密文字
     private RadioGroup mRG; //選擇藏解密方法
     private long startTime; //開始處理時間
@@ -96,6 +97,7 @@ public class mainActivity extends Activity {
         count = (TextView) findViewById(R.id.count);
         sbtn  = (Button) findViewById(R.id.btn);
         pb    = (ProgressBar) findViewById(R.id.progressBar);
+        pbl   = (ProgressBar) findViewById(R.id.pgBar);
         hbtn  = (Button) findViewById(R.id.hbtn);
         et    = (EditText) findViewById(R.id.ET);
         tv    = (TextView) findViewById(R.id.logTV);
@@ -205,9 +207,57 @@ public class mainActivity extends Activity {
             }
         }
     }
+
+    private boolean waitDouble = true;
+    private static final int DOUBLE_CLICK_TIME = 350; //二次click時間間隔
     private void loadLaunchPageInfo(){
-        ProcessTime(CountStart);
-        mLaunchPageInfo.setData(liv, tv, LaunchPageInfo.decodeDataType);
+
+        liv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (waitDouble == true){
+                    waitDouble = false;
+                    Thread thread = new Thread() {
+                        @Override
+                        public void run() {
+                            try {
+                                sleep(DOUBLE_CLICK_TIME);
+                                if (waitDouble == false){
+                                    waitDouble = true;
+                                    //singleClick();
+                                }
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    };
+                    thread.start();
+                }else{
+                    waitDouble = true;
+                    //doubleClick();
+                    //解密 launch photo
+                    ProcessTime(CountStart);
+                    tv.setText("");
+                    mLaunchPageInfo.setData(liv, tv, LaunchPageInfo.decodeDataType, null);
+                }
+            }
+        });
+
+        liv.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                //加密 launch photo
+                ProcessTime(CountStart);
+                pbl.setVisibility(View.VISIBLE);
+
+                BitmapDrawable mDrawable =  (BitmapDrawable) liv.getDrawable();
+                Bitmap bitmap = mDrawable.getBitmap();
+
+                mBitmapARGB = new BitmapARGB(mainActivity.this);
+                mBitmapARGB.getARGB(bitmap, BitmapARGB.hideLP);
+                return false;
+            }
+        });
     }
 
     private final int method1 = 1;
@@ -310,8 +360,9 @@ public class mainActivity extends Activity {
     public final static int decodeCount = 5;
     public final static int decodeStart = 6;
     public final static int PsnrCount   = 7;
-    public final static int decodeLP    = 8;
-    public final static int hideLP      = 9;
+    public final static int hideLP      = 8;
+    public final static int endSaveLP   = 9;
+    public final static int decodeLP    = 10;
 
     private Handler mHandler = new Handler();
     private Runnable runnable = new Runnable() {
@@ -355,7 +406,7 @@ public class mainActivity extends Activity {
                     public void run() {
                         try {
 //                            BitmapUtils.saveBitmapToFile(mainActivity.this, mBitmapARGB.getBitmap(), tv);
-                            BitmapUtils.saveBitmapToFile(mainActivity.this, mBitmapARGB.getBitmap());
+                            BitmapUtils.saveBitmapToFile(mainActivity.this, mBitmapARGB.getBitmap(), "datahiding.png");
 
                         } catch (Exception e) {
                             Log.e(TAG, e.toString());
@@ -363,6 +414,30 @@ public class mainActivity extends Activity {
                     }
                 };
                 thread.start();
+
+                totTime = endTime - startTime;
+                count.setText("Using Time: " + ((float)totTime/1000));
+                break;
+
+            case endSaveLP:
+                endTime = System.currentTimeMillis();
+                mHandler.removeCallbacks(runnable);
+                pbl.setVisibility(View.GONE);
+                eiv.setImageBitmap(mBitmapARGB.getBitmap());
+
+                Thread threadLP = new Thread(){
+                    @Override
+                    public void run() {
+                        try {
+//                            BitmapUtils.saveBitmapToFile(mainActivity.this, mBitmapARGB.getBitmap(), tv);
+                            BitmapUtils.saveBitmapToFile(mainActivity.this, mBitmapARGB.getBitmap(), "hidLP.png");
+
+                        } catch (Exception e) {
+                            Log.e(TAG, e.toString());
+                        }
+                    }
+                };
+                threadLP.start();
 
                 totTime = endTime - startTime;
                 count.setText("Using Time: " + ((float)totTime/1000));
@@ -396,6 +471,12 @@ public class mainActivity extends Activity {
                         mBitmapARGB.setRGB(mDataHiding3.getARGBvalues(), BitmapARGB.save);
                         break;
                 }
+                break;
+
+            case hideLP:
+                tv.setText("");
+                mLaunchPageInfo.setData(liv, tv, LaunchPageInfo.hideDataType, mBitmapARGB.getARGBvalues());
+                mBitmapARGB.setRGB(mLaunchPageInfo.getARGBvalues(), BitmapARGB.saveLP);
                 break;
 
             case decodeCount:
