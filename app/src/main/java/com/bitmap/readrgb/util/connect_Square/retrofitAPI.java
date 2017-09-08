@@ -24,6 +24,7 @@ public interface retrofitAPI {
     Call<ResponseBody> get(@Url String url);
 
     @GET("public/AppServices/version/newsApp2Beta/stage/android_1/version.json")
+//    @GET("public/AppServices/version/newsApp2Beta/version.json")
     Call<ResponseBody> launchDataGetCall();
 
     @FormUrlEncoded

@@ -26,28 +26,28 @@ public class LaunchDataInfo {
         public String androidBehavior = "";
     }
     public static class LaunchPhotoInfo implements Serializable{
-        public String seasonFile ;
-        public String seasonEditedKey ;
-        public String seasonStart ;
-        public String seasonEnd ;
-        public String defaultFile ;
-        public String defaultEditedKey ;
-        public int launchMillisTime;
+        public String seasonFile        ="";
+        public String seasonEditedKey   ="";
+        public String seasonStart       ="";
+        public String seasonEnd         ="";
+        public String defaultFile       ="";
+        public String defaultEditedKey  ="";
+        public int launchMillisTime     =0;
     }
 
     public static class LaunchAdInfo implements Serializable{
-        public String resource ;
-        public int delay ;
+        public String resource ="";
+        public int delay =0;
     }
 
     /*
     * 新聞內頁版型
     * */
     public static class NewsContentRule implements Serializable{
-        public String adResourceTop ;
-        public String adResourceBottom ;
-        public String flurryAdUnit ;
-        public int displayAdPosition;
+        public String adResourceTop     ="";
+        public String adResourceBottom  ="";
+        public String flurryAdUnit      ="";
+        public int displayAdPosition    =0;
     }
 
     /*
@@ -61,7 +61,7 @@ public class LaunchDataInfo {
     * 訂閱規則
     * */
     public static class SubsRule implements Serializable{
-        public int customizeSubsLimit ;
+        public int customizeSubsLimit =0;
     }
 
     /*

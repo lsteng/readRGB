@@ -2,9 +2,7 @@ package com.bitmap.readrgb.lab;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -40,21 +38,16 @@ public class LaunchPageInfo {
 
     public final static int hideDataType   = 0;
     public final static int decodeDataType = 1;
-    public void setData(ImageView iv, TextView tv, int actionType, int[][] rgbValues){
+    public void setData(ImageView iv, TextView tv, int actionType, int[][] rgbValues, Bitmap loadedImage){
         this.TV = tv;
         this.rgbValues = rgbValues;
+        this.bmp = loadedImage;
 
-        switch(actionType){
-            case hideDataType:
-                BitmapDrawable mDrawable =  (BitmapDrawable) iv.getDrawable();
-                bmp = mDrawable.getBitmap();
-                break;
-            case decodeDataType:
-                String pathName = mContext.getExternalCacheDir().getAbsolutePath() + "/pic/hideLP.png";
-                TV.append("pathName:" + pathName + "\n");
-                bmp = BitmapFactory.decodeFile(pathName);
-                break;
-        }
+//        if(actionType==decodeDataType){
+//            String pathName = mContext.getExternalCacheDir().getAbsolutePath() + "/pic/hideLP.png";
+//            TV.append("pathName:" + pathName + "\n");
+//            bmp = BitmapFactory.decodeFile(pathName);
+//        }
 
         rows = bmp.getWidth();
         columns = bmp.getHeight();

@@ -33,7 +33,6 @@ import com.bitmap.readrgb.lab.DataHiding2;
 import com.bitmap.readrgb.lab.DataHiding3;
 import com.bitmap.readrgb.lab.LaunchPageInfo;
 import com.bitmap.readrgb.lab.PSNR;
-import com.bitmap.readrgb.util.connect_Square.Retrofit2;
 import com.bitmap.readrgb.util.image.BitmapARGB;
 import com.bitmap.readrgb.util.image.BitmapUtils;
 import com.bitmap.readrgb.util.image.SelectImage;
@@ -82,6 +81,7 @@ public class mainActivity extends Activity {
     private PSNR mPSNR;
     private int mSeed = 123456;
     private LaunchPageInfo mLaunchPageInfo;
+    private Bitmap mLoadedImage;
 
     /**
      * Called when the activity is first created.
@@ -187,33 +187,40 @@ public class mainActivity extends Activity {
         // OkHttp3
 //        OkHttp3 mOkHttp3 = new OkHttp3(mainActivity.this);
         // Retrofit2
-        Retrofit2 mRetrofit2 = Retrofit2.getInstance(mainActivity.this);
-        mRetrofit2.setLaunchPageListener(new Retrofit2.LaunchPageListener(){
-            @Override
-            public void setImage(String url) {
-                mainApplication.imageLoader.displayImage(url, liv, mainApplication.options, new LaunchPageDisplayListener());
-                tv.setText("getLaunchPage: " + url +"\n");
-            }
-        });
-        mRetrofit2.requestLaunchData();
+//        Retrofit2 mRetrofit2 = Retrofit2.getInstance(mainActivity.this);
+//        mRetrofit2.setLaunchPageListener(new Retrofit2.LaunchPageListener(){
+//            @Override
+//            public void setImage(String url) {
+//                mainApplication.imageLoader.displayImage(url, liv, mainApplication.options, new LaunchPageDisplayListener());
+//                tv.setText("getLaunchPage: " + url +"\n");
+//            }
+//        });
+//        mRetrofit2.requestLaunchData();
+
+        // imageLoader
+        String lpUrl = "http://sun.iset.com.tw/public/AppServices/version/newsApp2Beta/files/bef582bc1f078763a242cd76be4a9287";
+        mainApplication.imageLoader.displayImage(lpUrl, liv, mainApplication.options, new LaunchPageDisplayListener());
     }
 
     class LaunchPageDisplayListener extends SimpleImageLoadingListener {
         @Override
         public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
             if (loadedImage != null) {
-//                ImageView imageView = (ImageView) view;
+                mLoadedImage = loadedImage;
                 mLaunchPageInfo = new LaunchPageInfo(mainActivity.this);
-                loadLaunchPageInfo(loadedImage);
+                loadLaunchPageInfo();
             }
         }
     }
 
     private boolean waitDouble = true;
     private static final int DOUBLE_CLICK_TIME = 350; //二次click時間間隔
-    private void loadLaunchPageInfo(final Bitmap loadedImage){
+    private void loadLaunchPageInfo(){
         //儲存來源圖片
-        BitmapUtils.saveBitmapToFile(mainActivity.this, loadedImage, "originLP.png");
+        BitmapUtils.saveBitmapToFile(mainActivity.this, mLoadedImage, "originLP.png");
+        //解密 launch photo
+        ProcessTime(CountStart);
+        mLaunchPageInfo.setData(liv, tv, LaunchPageInfo.decodeDataType, null, mLoadedImage);
 
         liv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -228,6 +235,10 @@ public class mainActivity extends Activity {
                                 if (waitDouble == false){
                                     waitDouble = true;
                                     //singleClick();
+                                    //解密 launch photo
+                                    ProcessTime(CountStart);
+                                    tv.setText("");
+                                    mLaunchPageInfo.setData(liv, tv, LaunchPageInfo.decodeDataType, null, mLoadedImage);
                                 }
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
@@ -241,7 +252,7 @@ public class mainActivity extends Activity {
                     //解密 launch photo
                     ProcessTime(CountStart);
                     tv.setText("");
-                    mLaunchPageInfo.setData(liv, tv, LaunchPageInfo.decodeDataType, null);
+                    mLaunchPageInfo.setData(liv, tv, LaunchPageInfo.decodeDataType, null, mLoadedImage);
                 }
             }
         });
@@ -254,7 +265,7 @@ public class mainActivity extends Activity {
                 pbl.setVisibility(View.VISIBLE);
 
                 mBitmapARGB = new BitmapARGB(mainActivity.this);
-                mBitmapARGB.getARGB(loadedImage, BitmapARGB.hideLP);
+                mBitmapARGB.getARGB(mLoadedImage, BitmapARGB.hideLP);
                 return false;
             }
         });
@@ -481,7 +492,7 @@ public class mainActivity extends Activity {
 
             case hideLP:
                 tv.setText("");
-                mLaunchPageInfo.setData(liv, tv, LaunchPageInfo.hideDataType, mBitmapARGB.getARGBvalues());
+                mLaunchPageInfo.setData(liv, tv, LaunchPageInfo.hideDataType, mBitmapARGB.getARGBvalues(), mLoadedImage);
                 mBitmapARGB.setRGB(mLaunchPageInfo.getARGBvalues(), BitmapARGB.saveLP);
 
                 chkColor(mLaunchPageInfo.getARGBvalues(), 0, 0);
