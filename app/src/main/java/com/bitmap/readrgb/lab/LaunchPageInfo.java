@@ -50,7 +50,7 @@ public class LaunchPageInfo {
                 bmp = mDrawable.getBitmap();
                 break;
             case decodeDataType:
-                String pathName = mContext.getExternalCacheDir().getAbsolutePath() + "/pic/hidLP.png";
+                String pathName = mContext.getExternalCacheDir().getAbsolutePath() + "/pic/hideLP.png";
                 TV.append("pathName:" + pathName + "\n");
                 bmp = BitmapFactory.decodeFile(pathName);
                 break;
@@ -59,6 +59,7 @@ public class LaunchPageInfo {
         rows = bmp.getWidth();
         columns = bmp.getHeight();
         Log.d(TAG, "rows:"+rows +"_columns:"+ columns);
+        TV.append("rows:"+rows +"_columns:"+ columns + "\n");
 
         topLeftX     = 0;
         topLeftY     = 0;
@@ -119,7 +120,7 @@ public class LaunchPageInfo {
         int color1 = bmp.getPixel(posX1, posY1);
         int color2 = bmp.getPixel(posX2, posY2);
 
-        a1 = (int) Color.alpha(color1);
+        a1 = (int)Color.alpha(color1);
         r1 = (int)Color.red(color1);
         g1 = (int)Color.green(color1);
         b1 = (int)Color.blue(color1);
@@ -129,8 +130,10 @@ public class LaunchPageInfo {
         g2 = (int)Color.green(color2);
         b2 = (int)Color.blue(color2);
 
-        TV.append(a1 +"_"+ r1 +"_"+ g1 +"_"+ b1 +" "+
-                  a2 +"_"+ r2 +"_"+ g2 +"_"+ b2 +"\n");
+//        TV.append(a1 +"_"+ r1 +"_"+ g1 +"_"+ b1 +" "+
+//                  a2 +"_"+ r2 +"_"+ g2 +"_"+ b2 +"\n");
+        TV.append(r1 +"_"+ g1 +"_"+ b1 +" "+
+                  r2 +"_"+ g2 +"_"+ b2 +"\n");
 
         if(hideKey==null){
             //Bitmap取alpha值，會都為255不透明，故不埋值

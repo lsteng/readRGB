@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
@@ -203,14 +204,16 @@ public class mainActivity extends Activity {
             if (loadedImage != null) {
 //                ImageView imageView = (ImageView) view;
                 mLaunchPageInfo = new LaunchPageInfo(mainActivity.this);
-                loadLaunchPageInfo();
+                loadLaunchPageInfo(loadedImage);
             }
         }
     }
 
     private boolean waitDouble = true;
     private static final int DOUBLE_CLICK_TIME = 350; //二次click時間間隔
-    private void loadLaunchPageInfo(){
+    private void loadLaunchPageInfo(final Bitmap loadedImage){
+        //儲存來源圖片
+        BitmapUtils.saveBitmapToFile(mainActivity.this, loadedImage, "originLP.png");
 
         liv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -250,11 +253,8 @@ public class mainActivity extends Activity {
                 ProcessTime(CountStart);
                 pbl.setVisibility(View.VISIBLE);
 
-                BitmapDrawable mDrawable =  (BitmapDrawable) liv.getDrawable();
-                Bitmap bitmap = mDrawable.getBitmap();
-
                 mBitmapARGB = new BitmapARGB(mainActivity.this);
-                mBitmapARGB.getARGB(bitmap, BitmapARGB.hideLP);
+                mBitmapARGB.getARGB(loadedImage, BitmapARGB.hideLP);
                 return false;
             }
         });
@@ -423,14 +423,15 @@ public class mainActivity extends Activity {
                 endTime = System.currentTimeMillis();
                 mHandler.removeCallbacks(runnable);
                 pbl.setVisibility(View.GONE);
-                eiv.setImageBitmap(mBitmapARGB.getBitmap());
+//                eiv.setImageBitmap(mBitmapARGB.getBitmap());
+                liv.setImageBitmap(mBitmapARGB.getBitmap());
 
                 Thread threadLP = new Thread(){
                     @Override
                     public void run() {
                         try {
 //                            BitmapUtils.saveBitmapToFile(mainActivity.this, mBitmapARGB.getBitmap(), tv);
-                            BitmapUtils.saveBitmapToFile(mainActivity.this, mBitmapARGB.getBitmap(), "hidLP.png");
+                            BitmapUtils.saveBitmapToFile(mainActivity.this, mBitmapARGB.getBitmap(), "hideLP.png");
 
                         } catch (Exception e) {
                             Log.e(TAG, e.toString());
@@ -438,6 +439,11 @@ public class mainActivity extends Activity {
                     }
                 };
                 threadLP.start();
+
+                chkColor(mBitmapARGB.getBitmap().getPixel(0, 0));
+                chkColor(mBitmapARGB.getBitmap().getPixel(0, 242));
+                chkColor(mBitmapARGB.getBitmap().getPixel(0, 431));
+                chkColor(mBitmapARGB.getBitmap().getPixel(242, 431));
 
                 totTime = endTime - startTime;
                 count.setText("Using Time: " + ((float)totTime/1000));
@@ -477,6 +483,11 @@ public class mainActivity extends Activity {
                 tv.setText("");
                 mLaunchPageInfo.setData(liv, tv, LaunchPageInfo.hideDataType, mBitmapARGB.getARGBvalues());
                 mBitmapARGB.setRGB(mLaunchPageInfo.getARGBvalues(), BitmapARGB.saveLP);
+
+                chkColor(mLaunchPageInfo.getARGBvalues(), 0, 0);
+                chkColor(mLaunchPageInfo.getARGBvalues(), 0, 242);
+                chkColor(mLaunchPageInfo.getARGBvalues(), 0, 431);
+                chkColor(mLaunchPageInfo.getARGBvalues(), 242, 431);
                 break;
 
             case decodeCount:
@@ -562,5 +573,21 @@ public class mainActivity extends Activity {
                 Toast.makeText(getApplicationContext(), "未取得授權！", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    private void chkColor(int[][] rgbValues, int x, int y){
+        int color = rgbValues[x][y];
+        //int a = (int)Color.alpha(color);
+        int r = (int)Color.red(color);
+        int g = (int)Color.green(color);
+        int b = (int)Color.blue(color);
+        tv.append(x+","+y+" -> "+r +"_"+ g +"_"+ b +"\n");
+    }
+    private void chkColor(int color){
+        //int a = (int)Color.alpha(color);
+        int r = (int)Color.red(color);
+        int g = (int)Color.green(color);
+        int b = (int)Color.blue(color);
+        tv.append("bitmap color: "+r +"_"+ g +"_"+ b +"\n");
     }
 }

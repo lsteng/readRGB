@@ -40,10 +40,10 @@ public class BitmapARGB {
     }
 
 //    public void getARGB(final Bitmap bmp, final int[][] rgbValues, final int msgID) {
-    public void getARGB(final Bitmap bmp, final int msgID) {
+    public void getARGB(Bitmap bmp, final int msgID) {
         mBitmap = bmp;
-        rows = bmp.getWidth(); //[列(row)]寬
-        columns = bmp.getHeight(); //[行(column)]高
+        rows = mBitmap.getWidth(); //[列(row)]寬
+        columns = mBitmap.getHeight(); //[行(column)]高
 
         Thread thread = new Thread() {
             @Override
@@ -55,7 +55,7 @@ public class BitmapARGB {
                 for (int i = 0; i < rows; i++) {
                     for (int j = 0; j < columns; j++) {
                         //This is a great opportunity to filter the ARGB values
-                        rgbValues[i][j] = bmp.getPixel(i, j);
+                        rgbValues[i][j] = mBitmap.getPixel(i, j);
 
 //                        int color = rgbValues[i][j];
 //                        int r = Color.red(color);

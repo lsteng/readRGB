@@ -50,7 +50,9 @@ public class mainApplication extends Application {
                 .showImageOnFail(R.mipmap.ic_launcher).cacheInMemory(true)
                 .cacheOnDisk(true).imageScaleType(ImageScaleType.EXACTLY)
 //				.displayer(new RoundedBitmapDisplayer(20))
-                .bitmapConfig(Bitmap.Config.RGB_565).build();
+//                .bitmapConfig(Bitmap.Config.RGB_565)
+                .bitmapConfig(Bitmap.Config.ARGB_8888) //返回的是一個inMutable的bitmap，可以调用setpixel设置每个像素颜色的bitmap
+                .build();
 
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(getApplicationContext())
 //				.memoryCacheExtraOptions(480, 800)
