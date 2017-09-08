@@ -204,6 +204,7 @@ public class mainActivity extends Activity {
     class LaunchPageDisplayListener extends SimpleImageLoadingListener {
         @Override
         public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+            pbl.setVisibility(View.GONE);
             if (loadedImage != null) {
                 mLoadedImage = loadedImage;
                 mLaunchPageInfo = new LaunchPageInfo(mainActivity.this);
@@ -415,7 +416,7 @@ public class mainActivity extends Activity {
 
                 String sSeed = mLaunchPageInfo.getKeyIX()+","+mLaunchPageInfo.getKeyIY();
                 mSeed = Integer.valueOf(sSeed.replace(",", ""));
-                tv.append("randomSeed: "+sSeed+"-"+mSeed);
+                tv.append("randomSeed: "+mSeed+"-"+sSeed);
                 break;
 
             case endSaveCount:
