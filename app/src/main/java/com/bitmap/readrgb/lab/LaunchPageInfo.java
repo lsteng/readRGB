@@ -2,6 +2,7 @@ package com.bitmap.readrgb.lab;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.util.Log;
 import android.widget.ImageView;
@@ -38,16 +39,23 @@ public class LaunchPageInfo {
 
     public final static int hideDataType   = 0;
     public final static int decodeDataType = 1;
-    public void setData(ImageView iv, TextView tv, int actionType, int[][] rgbValues, Bitmap loadedImage){
+    public final static int decodelocalData= 2;
+    public void setData(ImageView iv, TextView tv, int actionType, int[][] rgbValues, Bitmap bitmap){
         this.TV = tv;
         this.rgbValues = rgbValues;
-        this.bmp = loadedImage;
 
-//        if(actionType==decodeDataType){
-//            String pathName = mContext.getExternalCacheDir().getAbsolutePath() + "/pic/hideLP.png";
-//            TV.append("pathName:" + pathName + "\n");
-//            bmp = BitmapFactory.decodeFile(pathName);
-//        }
+        switch(actionType){
+            case hideDataType:
+            case decodeDataType:
+                bmp = bitmap;
+                break;
+            case decodelocalData:
+                String pathName = mContext.getExternalCacheDir().getAbsolutePath() + "/pic/hideLP.png";
+                TV.append("pathName:" + pathName + "\n");
+                bmp = BitmapFactory.decodeFile(pathName);
+                break;
+
+        }
 
         rows = bmp.getWidth();
         columns = bmp.getHeight();
@@ -65,6 +73,7 @@ public class LaunchPageInfo {
 
         switch(actionType){
             case decodeDataType:
+            case decodelocalData:
                 decodeData();
                 break;
             case hideDataType:

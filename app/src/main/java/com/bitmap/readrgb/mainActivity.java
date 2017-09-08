@@ -33,6 +33,7 @@ import com.bitmap.readrgb.lab.DataHiding2;
 import com.bitmap.readrgb.lab.DataHiding3;
 import com.bitmap.readrgb.lab.LaunchPageInfo;
 import com.bitmap.readrgb.lab.PSNR;
+import com.bitmap.readrgb.util.connect_Square.Retrofit2;
 import com.bitmap.readrgb.util.image.BitmapARGB;
 import com.bitmap.readrgb.util.image.BitmapUtils;
 import com.bitmap.readrgb.util.image.SelectImage;
@@ -50,6 +51,7 @@ public class mainActivity extends Activity {
     //a Bitmap that will act as a handle to the image
     private Bitmap bmp;
     private BitmapFactory.Options options;
+    private Bitmap bmpLP;
 
     //an integer array that will store ARGB pixel values
 //    private int[][] rgbValues;
@@ -113,6 +115,7 @@ public class mainActivity extends Activity {
         options.inMutable = true;  //如果为true，则返回一个可以调用setpixel设置每个像素颜色的bitmap，否则调用setpixel会crash
         bmp = BitmapFactory.decodeResource(getResources(), R.mipmap.lenna512, options);
 //        bmp = BitmapUtils.decodeSampledBitmapFromResource(getResources(), R.mipmap.lenna512, 512, 512);
+        bmpLP = BitmapFactory.decodeResource(getResources(), R.mipmap.launch, options);
 
         //define the array size
 //        rgbValues = new int[bmp.getWidth()][bmp.getHeight()];
@@ -187,19 +190,15 @@ public class mainActivity extends Activity {
         // OkHttp3
 //        OkHttp3 mOkHttp3 = new OkHttp3(mainActivity.this);
         // Retrofit2
-//        Retrofit2 mRetrofit2 = Retrofit2.getInstance(mainActivity.this);
-//        mRetrofit2.setLaunchPageListener(new Retrofit2.LaunchPageListener(){
-//            @Override
-//            public void setImage(String url) {
-//                mainApplication.imageLoader.displayImage(url, liv, mainApplication.options, new LaunchPageDisplayListener());
-//                tv.setText("getLaunchPage: " + url +"\n");
-//            }
-//        });
-//        mRetrofit2.requestLaunchData();
-
-        // imageLoader
-        String lpUrl = "http://sun.iset.com.tw/public/AppServices/version/newsApp2Beta/files/bef582bc1f078763a242cd76be4a9287";
-        mainApplication.imageLoader.displayImage(lpUrl, liv, mainApplication.options, new LaunchPageDisplayListener());
+        Retrofit2 mRetrofit2 = Retrofit2.getInstance(mainActivity.this);
+        mRetrofit2.setLaunchPageListener(new Retrofit2.LaunchPageListener(){
+            @Override
+            public void setImage(String url) {
+                mainApplication.imageLoader.displayImage(url, liv, mainApplication.options, new LaunchPageDisplayListener());
+                tv.setText("getLaunchPage: " + url +"\n");
+            }
+        });
+        mRetrofit2.requestLaunchData();
     }
 
     class LaunchPageDisplayListener extends SimpleImageLoadingListener {
@@ -235,10 +234,7 @@ public class mainActivity extends Activity {
                                 if (waitDouble == false){
                                     waitDouble = true;
                                     //singleClick();
-                                    //解密 launch photo
-                                    ProcessTime(CountStart);
-                                    tv.setText("");
-                                    mLaunchPageInfo.setData(liv, tv, LaunchPageInfo.decodeDataType, null, mLoadedImage);
+                                    //會與長按事件衝突，故不動作
                                 }
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
@@ -252,7 +248,7 @@ public class mainActivity extends Activity {
                     //解密 launch photo
                     ProcessTime(CountStart);
                     tv.setText("");
-                    mLaunchPageInfo.setData(liv, tv, LaunchPageInfo.decodeDataType, null, mLoadedImage);
+                    mLaunchPageInfo.setData(liv, tv, LaunchPageInfo.decodelocalData, null, mLoadedImage);
                 }
             }
         });
@@ -265,7 +261,7 @@ public class mainActivity extends Activity {
                 pbl.setVisibility(View.VISIBLE);
 
                 mBitmapARGB = new BitmapARGB(mainActivity.this);
-                mBitmapARGB.getARGB(mLoadedImage, BitmapARGB.hideLP);
+                mBitmapARGB.getARGB(bmpLP, BitmapARGB.hideLP);
                 return false;
             }
         });
@@ -492,7 +488,7 @@ public class mainActivity extends Activity {
 
             case hideLP:
                 tv.setText("");
-                mLaunchPageInfo.setData(liv, tv, LaunchPageInfo.hideDataType, mBitmapARGB.getARGBvalues(), mLoadedImage);
+                mLaunchPageInfo.setData(liv, tv, LaunchPageInfo.hideDataType, mBitmapARGB.getARGBvalues(), bmpLP);
                 mBitmapARGB.setRGB(mLaunchPageInfo.getARGBvalues(), BitmapARGB.saveLP);
 
                 chkColor(mLaunchPageInfo.getARGBvalues(), 0, 0);

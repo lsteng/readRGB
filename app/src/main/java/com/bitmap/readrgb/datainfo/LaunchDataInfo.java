@@ -12,11 +12,11 @@ public class LaunchDataInfo {
     public static class Launch implements Serializable {
         public VersionCheckInfo version;
         public LaunchPhotoInfo launchPhoto;
-        public LaunchAdInfo launchAd;
-        public NewsContentRule newsContentRule;
-        public DFPContentRule dfpContentRule;
-        public SubsRule subsRule;
-        public NewsListRule newsListRule;
+//        public LaunchAdInfo launchAd;
+//        public NewsContentRule newsContentRule;
+//        public DFPContentRule dfpContentRule;
+//        public SubsRule subsRule;
+//        public NewsListRule newsListRule;
 //        public static int customizeSubsLimit = 10;
     }
 
@@ -28,11 +28,11 @@ public class LaunchDataInfo {
     public static class LaunchPhotoInfo implements Serializable{
         public String seasonFile        ="";
         public String seasonEditedKey   ="";
-        public String seasonStart       ="";
-        public String seasonEnd         ="";
+//        public String seasonStart       ="";
+//        public String seasonEnd         ="";
         public String defaultFile       ="";
         public String defaultEditedKey  ="";
-        public int launchMillisTime     =0;
+//        public int launchMillisTime     =0;
     }
 
     public static class LaunchAdInfo implements Serializable{
