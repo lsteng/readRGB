@@ -19,6 +19,7 @@ public class DataHiding3 {
     private Context mContext;
 
     private TextView TV;
+    private String startP;
 
     public static synchronized DataHiding3 getInstance(Context context){
         return new DataHiding3(context);
@@ -30,11 +31,12 @@ public class DataHiding3 {
 
     private int[][] rgbValues;
     private int rows, columns; //[列(row)]寬, [行(column)]高
-    public void setData(String key, int[][] rgbValues, int rows, int columns, TextView tv){
+    public void setData(String key, int[][] rgbValues, int rows, int columns, String startP, TextView tv){
         this.rgbValues = rgbValues;
         this.rows = rows;
         this.columns = columns;
         this.TV = tv;
+        this.startP = startP;
 
         int totalCount = key.length();
 
@@ -270,7 +272,10 @@ public class DataHiding3 {
 
         int x,y ;
         String coordinate ;
-        String startP = (rangeX-1)+","+(rangeY-1);
+        if(startP==null){
+            startP = (rangeX-1)+","+(rangeY-1);
+        }
+        TV.append("startP: "+ startP +"\n");
         hset.add(startP);
         while(hset.size()<(keyLength+1)){
             x=random.nextInt(rangeX)/2*2; //(2x2)為一區塊

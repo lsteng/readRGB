@@ -23,6 +23,7 @@ public class DataDecoding3 {
     private int rows, columns; //[列(row)]寬, [行(column)]高
     private int keyCount;
     private TextView TV, dTV;
+    private String startP;
 
     public static synchronized DataDecoding3 getInstance(Context context){
         return new DataDecoding3(context);
@@ -32,8 +33,9 @@ public class DataDecoding3 {
         mContext = context;
     }
 
-    public void setData(ImageView iv, TextView tv){
+    public void setData(ImageView iv, String startP, TextView tv){
         this.TV = tv;
+        this.startP = startP;
 
 //        BitmapDrawable mDrawable =  (BitmapDrawable) iv.getDrawable();
 //        Bitmap bmp = mDrawable.getBitmap();
@@ -60,9 +62,19 @@ public class DataDecoding3 {
         this.dTV = dtv;
         TV.append("rows:"+rows +"_columns:"+ columns +"\n");
 
-        //長寬最大值奇偶數處理
-        int startX = (rows%2==0) ? rows-2:rows-3;
-        int startY = (columns%2==0) ? columns-2:columns-3;
+        int startX, startY;
+        if(startP==null){
+            //長寬最大值奇偶數處理
+            startX = (rows%2==0) ? rows-2:rows-3;
+            startY = (columns%2==0) ? columns-2:columns-3;
+        }else{
+            //從圖片中取得的起始值
+            int index = startP.indexOf(",");
+            int length = startP.length();
+            startX = Integer.valueOf(startP.substring(0, index));
+            startY = Integer.valueOf(startP.substring(index+1, length));
+        }
+        TV.append("startP: "+ startP +"\n");
 
         loadData(keySize, startX, startY, 0); //取字數長度
         TV.append("key length:"+keyCount +"\n");

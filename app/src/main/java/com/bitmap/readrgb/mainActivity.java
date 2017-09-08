@@ -82,6 +82,7 @@ public class mainActivity extends Activity {
     private DataDecoding3 mDataDecoding3;
     private PSNR mPSNR;
     private int mSeed = 123456;
+    private String sSeed;
     private LaunchPageInfo mLaunchPageInfo;
     private Bitmap mLoadedImage;
 
@@ -171,7 +172,7 @@ public class mainActivity extends Activity {
                         break;
                     case method3:
                         mDataDecoding3 = new DataDecoding3(mainActivity.this);
-                        mDataDecoding3.setData(eiv, tv);
+                        mDataDecoding3.setData(eiv, sSeed, tv);
                         break;
                 }
             }
@@ -414,7 +415,7 @@ public class mainActivity extends Activity {
                 //印出執行時間
                 count.setText("Using Time: " + ((float)totTime/1000));
 
-                String sSeed = mLaunchPageInfo.getKeyIX()+","+mLaunchPageInfo.getKeyIY();
+                sSeed = mLaunchPageInfo.getKeyIX()+","+mLaunchPageInfo.getKeyIY();
                 mSeed = Integer.valueOf(sSeed.replace(",", ""));
                 tv.append("randomSeed: "+mSeed+"-"+sSeed);
                 break;
@@ -497,7 +498,7 @@ public class mainActivity extends Activity {
                         mBitmapARGB.setRGB(mDataHiding2.getARGBvalues(), BitmapARGB.save);
                         break;
                     case method3:
-                        mDataHiding3.setData(s, mBitmapARGB.getARGBvalues(), bmp.getWidth(), bmp.getHeight(), tv);
+                        mDataHiding3.setData(s, mBitmapARGB.getARGBvalues(), bmp.getWidth(), bmp.getHeight(), sSeed, tv);
                         mBitmapARGB.setRGB(mDataHiding3.getARGBvalues(), BitmapARGB.save);
                         break;
                 }
