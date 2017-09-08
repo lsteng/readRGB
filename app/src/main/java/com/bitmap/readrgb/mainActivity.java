@@ -86,9 +86,6 @@ public class mainActivity extends Activity {
     private LaunchPageInfo mLaunchPageInfo;
     private Bitmap mLoadedImage;
 
-    /**
-     * Called when the activity is first created.
-     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -197,6 +194,9 @@ public class mainActivity extends Activity {
             public void setImage(String url) {
                 mainApplication.imageLoader.displayImage(url, liv, mainApplication.options, new LaunchPageDisplayListener());
                 tv.setText("getLaunchPage: " + url +"\n");
+                if(mSeed!=123456){
+                    tv.append("randomSeed: "+mSeed+"-"+sSeed);
+                }
             }
         });
         mRetrofit2.requestLaunchData();
