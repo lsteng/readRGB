@@ -29,6 +29,11 @@ public class LaunchPageInfo {
     private int BottomLeftX, BottomLeftY;
     private int BottomRightX, BottomRightY;
 
+    private final int keyTypeX = 0;
+    private final int keyTypeY = 1;
+    private int keyIX;
+    private int keyIY;
+
     public static synchronized LaunchPageInfo getInstance(Context context){
         return new LaunchPageInfo(context);
     }
@@ -92,21 +97,19 @@ public class LaunchPageInfo {
         String x = Integer.toBinaryString(startX);
         x = Fillin0(x, n); //預設二進位長度7位，長度小於7則補0
         TV.append("X座標:"+startX+" -> "+x +"\n");
-        getARGBcolor(topLeftX, topLeftY, topRightX, topRightY, x);
+        getARGBcolor(topLeftX, topLeftY, topRightX, topRightY, x, -1);
 
         //埋放Y座標
         int startY = (columns<ranges)?random.nextInt(columns):random.nextInt(ranges);
         String y = Integer.toBinaryString(startY);
         y = Fillin0(y, n); //預設二進位長度7位，長度小於7則補0
         TV.append("Y座標:"+startY+" -> "+y +"\n");
-        getARGBcolor(BottomLeftX, BottomLeftY, BottomRightX, BottomRightY, y);
+        getARGBcolor(BottomLeftX, BottomLeftY, BottomRightX, BottomRightY, y, -1);
     }
 
     public void decodeData(){
-        getARGBcolor(topLeftX, topLeftY, topRightX, topRightY, null);
-        getARGBcolor(BottomLeftX, BottomLeftY, BottomRightX, BottomRightY, null);
-
-        ((mainActivity)mContext).ProcessTime(mainActivity.endCount);
+        getARGBcolor(topLeftX, topLeftY, topRightX, topRightY, null, keyTypeX);
+        getARGBcolor(BottomLeftX, BottomLeftY, BottomRightX, BottomRightY, null, keyTypeY);
     }
 
     private final int type_alpha = 0;
@@ -115,7 +118,7 @@ public class LaunchPageInfo {
     private final int type_blue  = 3;
     private int a1, r1, g1, b1;
     private int a2, r2, g2, b2;
-    private void getARGBcolor(int posX1, int posY1, int posX2, int posY2, String hideKey){
+    private void getARGBcolor(int posX1, int posY1, int posX2, int posY2, String hideKey, int keyType){
 //        Log.d(TAG, posX1+"_"+posY1+":"+posX2+"_"+posY2);
         TV.append("pos:"+ posX1+"_"+posY1+":"+posX2+"_"+posY2 +"\n");
 
@@ -148,6 +151,17 @@ public class LaunchPageInfo {
             int numberKey = Integer.valueOf(binaryKey, 2);
             TV.append("-> "+ binaryKey +" : "+ numberKey +"\n");
 
+            switch(keyType){
+                case keyTypeX:
+                    keyIX = numberKey;
+                    TV.append("keyIX-> "+ keyIX +"\n");
+                    break;
+                case keyTypeY:
+                    keyIY = numberKey;
+                    TV.append("keyIY-> "+ keyIY +"\n");
+                    ((mainActivity)mContext).ProcessTime(mainActivity.endDecodeLP);
+                    break;
+            }
         }else{
             TV.append(hideKey +"\n");
 
@@ -169,6 +183,8 @@ public class LaunchPageInfo {
     public int[][] getARGBvalues(){
         return rgbValues;
     };
+    public int getKeyIX(){ return keyIX; }
+    public int getKeyIY(){ return keyIY; }
 
     private void resetColor(int typeColor, int currentP, int nextP, String binaryKey){
         int to10Key = Integer.valueOf(binaryKey, 2);

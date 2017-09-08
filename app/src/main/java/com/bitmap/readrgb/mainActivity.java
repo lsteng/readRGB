@@ -267,9 +267,9 @@ public class mainActivity extends Activity {
         });
     }
 
-    private final int method1 = 1;
-    private final int method2 = 2;
-    private final int method3 = 3;
+    private final int method1 = 1; //圖片四邊
+    private final int method2 = 2; //亂數種子
+    private final int method3 = 3; //隨機找下一點
     private int methodID = method2;
     private void setMethod(int checkedId){
         switch(checkedId){
@@ -369,7 +369,7 @@ public class mainActivity extends Activity {
     public final static int PsnrCount   = 7;
     public final static int hideLP      = 8;
     public final static int endSaveLP   = 9;
-    public final static int decodeLP    = 10;
+    public final static int endDecodeLP = 10;
 
     private Handler mHandler = new Handler();
     private Runnable runnable = new Runnable() {
@@ -400,6 +400,22 @@ public class mainActivity extends Activity {
                 totTime = endTime - startTime;
                 //印出執行時間
                 count.setText("Using Time: " + ((float)totTime/1000));
+                break;
+
+            case endDecodeLP:
+                //結束時間
+                endTime = System.currentTimeMillis();
+                mHandler.removeCallbacks(runnable);
+                pb.setVisibility(View.GONE);
+                //執行時間
+//                totTime = startTime - System.currentTimeMillis();
+                totTime = endTime - startTime;
+                //印出執行時間
+                count.setText("Using Time: " + ((float)totTime/1000));
+
+                String sSeed = mLaunchPageInfo.getKeyIX()+","+mLaunchPageInfo.getKeyIY();
+                mSeed = Integer.valueOf(sSeed.replace(",", ""));
+                tv.append("randomSeed: "+sSeed+"-"+mSeed);
                 break;
 
             case endSaveCount:

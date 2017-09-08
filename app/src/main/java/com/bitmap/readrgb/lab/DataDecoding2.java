@@ -42,6 +42,7 @@ public class DataDecoding2 {
     public void setData(ImageView iv, int seed, TextView tv){
         this.mSeed = seed;
         this.TV = tv;
+        tv.append("randomSeed: "+seed+"\n");
 
 //        BitmapDrawable mDrawable =  (BitmapDrawable) iv.getDrawable();
 //        Bitmap bmp = mDrawable.getBitmap();

@@ -42,6 +42,7 @@ public class DataHiding2 {
 
         Log.d(TAG, "rows:"+rows +"_columns:"+ columns);
         tv.append("rows:"+rows +"_columns:"+ columns +"\n");
+        tv.append("randomSeed: "+seed+"\n");
 
         //使用亂數種子，先得到起始點座標
         Random random = new Random();
