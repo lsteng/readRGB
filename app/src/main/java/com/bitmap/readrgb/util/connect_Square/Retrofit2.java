@@ -47,7 +47,8 @@ public class Retrofit2 {
     public void requestLaunchData(){
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://sun.iset.com.tw/")
+//                .baseUrl("http://sun.iset.com.tw/")
+                .baseUrl("https://s3-ap-northeast-1.amazonaws.com/sun.iset.com.tw/")
                 .build();
         retrofitAPI repo = retrofit.create(retrofitAPI.class);
 
