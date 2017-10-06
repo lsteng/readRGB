@@ -15,3 +15,41 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+#-dontwarn com.jakewharton.**
+-dontwarn com.squareup.**
+-dontwarn io.reactivex.**
+
+#如果使用是okhttp和rxAndroid，retrofit2
+#在打包release時會報錯，找不到okio，rx，retrofit
+#只需要在app下的proguard-rules.pro混淆文件中加入下列四項即可
+-dontwarn org.codehaus.**
+-dontwarn java.nio.**
+-dontwarn java.lang.invoke.**
+-dontwarn rx.**
+
+-dontwarn okhttp3.**
+-keep class okhttp3.** { *; }
+-dontwarn retrofit2.**
+-keep class retrofit2.** { *; }
+
+-keep class android.support.v4.** { *; }
+-keep class android.support.v7.** { *; }
+#-keep interface android.support.v4.app.** { *; }
+#-keep interface android.support.v7.app.** { *; }
+
+
+#混淆時不會產生形形色色的類名
+#-dontusemixedcaseclassnames
+
+-renamesourcefileattribute SourceFile
+-keepattributes SourceFile,LineNumberTable
+
+##---------------Begin: proguard configuration for Gson  ----------
+# Gson uses generic type information stored in a class file when working with fields. Proguard
+# removes such information by default, so configure it to keep all of it.
+-keepattributes Signature
+-keepattributes Exceptions
+
+# For using GSON @Expose annotation
+-keepattributes *Annotation*
