@@ -137,14 +137,14 @@ public class DataHiding3 {
             TV.append(coordinateList.get(pos+1) +"\n");
 
             TV.append(Xs +"\n");
-            resetColor(type_red, colorR[0], colorR[2], Xs.substring(0, 4), numberX);
-            resetColor(type_green, colorG[0], colorG[2], Xs.substring(4, 8), numberX);
-            resetColor(type_blue, colorB[0], colorB[2], Xs.substring(8, 12), numberX);
+            resetColor(type_red, colorR[0], colorR[2], Xs.substring(0, 5), numberX);
+            resetColor(type_green, colorG[0], colorG[2], Xs.substring(5, 9), numberX);
+            resetColor(type_blue, colorB[0], colorB[2], Xs.substring(9, 13), numberX);
 
             TV.append(Ys +"\n");
-            resetColor(type_red, colorR[0], colorR[3], Ys.substring(0, 4), numberY);
-            resetColor(type_green, colorG[0], colorG[3], Ys.substring(4, 8), numberY);
-            resetColor(type_blue, colorB[0], colorB[3], Ys.substring(8, 12), numberY);
+            resetColor(type_red, colorR[0], colorR[3], Ys.substring(0, 5), numberY);
+            resetColor(type_green, colorG[0], colorG[3], Ys.substring(5, 9), numberY);
+            resetColor(type_blue, colorB[0], colorB[3], Ys.substring(9, 13), numberY);
         }
 
         TV.append("----------------------------- \n");
@@ -323,8 +323,8 @@ public class DataHiding3 {
         int Px = Integer.valueOf(position.substring(0, index));
         int Py = Integer.valueOf(position.substring(index+1, length));
         int digit = 1000;
-        String Bx = Fillin0(Integer.toBinaryString((Px/digit)/2), 3) + Fillin0(Integer.toBinaryString((Px%digit)/2), 9);
-        String By = Fillin0(Integer.toBinaryString((Py/digit)/2), 3) + Fillin0(Integer.toBinaryString((Py%digit)/2), 9);
+        String Bx = Fillin0(Integer.toBinaryString((Px/digit)), 4) + Fillin0(Integer.toBinaryString((Px%digit)/2), 9);
+        String By = Fillin0(Integer.toBinaryString((Py/digit)), 4) + Fillin0(Integer.toBinaryString((Py%digit)/2), 9);
         position = Bx+","+By;
         algorithmList.add(position);
     }

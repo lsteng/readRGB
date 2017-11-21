@@ -108,10 +108,10 @@ public class DataDecoding3 {
 //    private List<Integer> coordinateY = new ArrayList<Integer>();
     private void algorithm(String X, String Y){
         TV.append("pos:"+ X+"_"+Y +"\n");
-        int Xt = (Integer.valueOf(X.substring(0, 3), 2))*2;
-        int Yt = (Integer.valueOf(Y.substring(0, 3), 2))*2;
-        int Xo = (Integer.valueOf(X.substring(3, 12), 2))*2;
-        int Yo = (Integer.valueOf(Y.substring(3, 12), 2))*2;
+        int Xt = (Integer.valueOf(X.substring(0, 4), 2));
+        int Yt = (Integer.valueOf(Y.substring(0, 4), 2));
+        int Xo = (Integer.valueOf(X.substring(4, 13), 2))*2;
+        int Yo = (Integer.valueOf(Y.substring(4, 13), 2))*2;
         int digit = 1000;
         int Px = (Xt*digit)+Xo;
         int Py = (Yt*digit)+Yo;
@@ -191,11 +191,11 @@ public class DataDecoding3 {
         TV.append("-> "+ binaryKey +"\n");
 
 
-        String Xr = FillIn0(Integer.toBinaryString(Math.abs(colorR[0]-colorR[2])), 4);
+        String Xr = FillIn0(Integer.toBinaryString(Math.abs(colorR[0]-colorR[2])), 5);
         String Xg = FillIn0(Integer.toBinaryString(Math.abs(colorG[0]-colorG[2])), 4);
         String Xb = FillIn0(Integer.toBinaryString(Math.abs(colorB[0]-colorB[2])), 4);
         String X  = Xr + Xg + Xb;
-        String Yr = FillIn0(Integer.toBinaryString(Math.abs(colorR[0]-colorR[3])), 4);
+        String Yr = FillIn0(Integer.toBinaryString(Math.abs(colorR[0]-colorR[3])), 5);
         String Yg = FillIn0(Integer.toBinaryString(Math.abs(colorG[0]-colorG[3])), 4);
         String Yb = FillIn0(Integer.toBinaryString(Math.abs(colorB[0]-colorB[3])), 4);
         String Y  = Yr + Yg + Yb;
